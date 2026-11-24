@@ -1,0 +1,3629 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ancient Merchant: Jejak Barter Gorontalo</title>
+  <meta name="description" content="Ancient Merchant: Jejak Barter Gorontalo — A 16-bit pixel-art educational trading and barter strategy puzzle game set in coastal Gorontalo, Indonesia." />
+  <meta property="og:title" content="Ancient Merchant: Jejak Barter Gorontalo" />
+  <meta property="og:description" content="A 16-bit pixel-art educational trading and barter strategy puzzle game set in coastal Gorontalo, Indonesia." />
+  <meta property="og:type" content="website" />
+  <style>
+    :root {
+      --ink: #231710;
+      --ink-soft: #4c3322;
+      --wood-dark: #4a2c18;
+      --wood-mid: #6b4226;
+      --wood-light: #935f37;
+      --wood-trim: #b9824f;
+      --sand-bg: #efe0b9;
+      --parchment: #f7edd4;
+      --parchment-deep: #e6d2a4;
+      --ocean-deep: #1b5673;
+      --ocean-mid: #2a7b9b;
+      --ocean-light: #4ea5bd;
+      --leaf-dark: #2c5b31;
+      --leaf-mid: #478342;
+      --leaf-bright: #6ca653;
+      --gold-dark: #9c6a16;
+      --gold-mid: #d39a2b;
+      --gold-bright: #f2cb57;
+      --crimson: #a8332a;
+      --crimson-soft: #f7dcd8;
+      --emerald-ink: #1f5c30;
+      --emerald-soft: #dcf0dc;
+      --font-display: "Courier New", Courier, monospace;
+      --font-ui: "Trebuchet MS", "Segoe UI", Tahoma, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background-color: #1a120c;
+      color: var(--ink);
+      font-family: var(--font-ui);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    canvas {
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      display: block;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: inherit;
+    }
+
+    button:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 3px solid var(--gold-bright);
+      outline-offset: 2px;
+    }
+
+    .tabular {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Pixel-art wooden & parchment frame system */
+    .pixel-panel {
+      background-color: var(--parchment);
+      border: 3px solid var(--ink);
+      box-shadow:
+        inset 0 0 0 3px var(--wood-trim),
+        inset 0 0 0 5px var(--wood-dark),
+        0 4px 0 0 rgba(20, 12, 6, 0.55);
+      border-radius: 2px;
+    }
+
+    .pixel-panel-wood {
+      background-color: var(--wood-mid);
+      color: var(--parchment);
+      border: 3px solid var(--ink);
+      box-shadow:
+        inset 0 2px 0 0 var(--wood-trim),
+        inset 0 -3px 0 0 var(--wood-dark),
+        0 4px 0 0 rgba(20, 12, 6, 0.6);
+      border-radius: 2px;
+    }
+
+    .pixel-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 8px 16px;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      flex-shrink: 0;
+      border: 3px solid var(--ink);
+      background-color: var(--parchment);
+      color: var(--ink);
+      box-shadow:
+        inset 0 2px 0 0 #fff7e2,
+        inset 0 -3px 0 0 var(--parchment-deep),
+        0 3px 0 0 var(--ink);
+      transition: transform 90ms ease, background-color 120ms ease;
+      user-select: none;
+    }
+
+    .pixel-btn:hover:not(:disabled) {
+      background-color: #fff6dc;
+      transform: translateY(-1px);
+    }
+
+    .pixel-btn:active:not(:disabled) {
+      transform: translateY(2px);
+      box-shadow:
+        inset 0 2px 0 0 var(--parchment-deep),
+        0 1px 0 0 var(--ink);
+    }
+
+    .pixel-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: inset 0 0 0 2px rgba(35, 23, 16, 0.15);
+    }
+
+    .pixel-btn-gold {
+      background-color: var(--gold-mid);
+      color: #1f1308;
+      box-shadow:
+        inset 0 2px 0 0 var(--gold-bright),
+        inset 0 -3px 0 0 var(--gold-dark),
+        0 3px 0 0 var(--ink);
+    }
+
+    .pixel-btn-gold:hover:not(:disabled) {
+      background-color: #dfaa36;
+    }
+
+    .pixel-btn-green {
+      background-color: var(--leaf-mid);
+      color: #fcf7e8;
+      box-shadow:
+        inset 0 2px 0 0 var(--leaf-bright),
+        inset 0 -3px 0 0 var(--leaf-dark),
+        0 3px 0 0 var(--ink);
+    }
+
+    .pixel-btn-green:hover:not(:disabled) {
+      background-color: #52944b;
+    }
+
+    .pixel-btn-wood {
+      background-color: var(--wood-light);
+      color: var(--parchment);
+      box-shadow:
+        inset 0 2px 0 0 var(--wood-trim),
+        inset 0 -3px 0 0 var(--wood-dark),
+        0 3px 0 0 var(--ink);
+    }
+
+    .pixel-btn-wood:hover:not(:disabled) {
+      background-color: #a66c40;
+    }
+
+    /* App Wrapper */
+    .app-viewport {
+      min-height: 100vh;
+      min-height: 100dvh;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          #24160e 0px,
+          #24160e 24px,
+          #1d110a 24px,
+          #1d110a 48px
+        );
+    }
+
+    .game-frame {
+      position: relative;
+      width: 100%;
+      max-width: 1360px;
+      background-color: var(--sand-bg);
+      border: 4px solid var(--ink);
+      box-shadow:
+        inset 0 0 0 3px var(--wood-trim),
+        0 14px 36px rgba(0, 0, 0, 0.65);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Title Screen Overlay */
+    .title-screen {
+      position: relative;
+      width: 100%;
+      min-height: 620px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--ocean-deep);
+      overflow: hidden;
+    }
+
+    .title-bg-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
+    .title-scrim {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(20, 14, 10, 0.35) 0%,
+        rgba(20, 14, 10, 0.15) 45%,
+        rgba(20, 14, 10, 0.72) 100%
+      );
+      pointer-events: none;
+    }
+
+    .title-content {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 20px;
+      gap: 20px;
+      text-align: center;
+    }
+
+    .title-plaque {
+      max-width: 620px;
+      width: 100%;
+      padding: 24px 28px;
+      background-color: rgba(247, 237, 212, 0.95);
+      border: 4px solid var(--ink);
+      box-shadow:
+        inset 0 0 0 3px var(--gold-mid),
+        inset 0 0 0 6px var(--wood-dark),
+        0 8px 0 rgba(20, 12, 6, 0.7);
+    }
+
+    .title-kicker {
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--wood-mid);
+      margin-bottom: 6px;
+    }
+
+    .title-main {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.05;
+      font-weight: 900;
+      color: var(--ink);
+      letter-spacing: 0.04em;
+      text-shadow: 2px 2px 0 var(--gold-bright);
+    }
+
+    .title-sub {
+      margin-top: 6px;
+      font-family: var(--font-display);
+      font-size: clamp(14px, 1.8vw, 18px);
+      font-weight: 700;
+      color: var(--ocean-deep);
+    }
+
+    .title-desc {
+      margin-top: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--ink-soft);
+    }
+
+    .title-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .title-btn-lg {
+      min-height: 48px;
+      padding: 12px 28px;
+      font-size: 16px;
+    }
+
+    .title-hint-bar {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      padding: 10px 16px;
+      background-color: rgba(35, 23, 16, 0.88);
+      color: var(--parchment);
+      font-family: var(--font-display);
+      font-size: 12px;
+      text-align: center;
+      border-top: 2px solid var(--wood-trim);
+    }
+
+    /* Active Game Layout */
+    .game-shell {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      background-color: #d9c290;
+    }
+
+    .game-shell.active {
+      display: flex;
+    }
+
+    /* TOP HUD */
+    .top-hud {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px 16px;
+      padding: 8px 14px;
+      background-color: var(--wood-dark);
+      color: var(--parchment);
+      border-bottom: 4px solid var(--ink);
+      box-shadow: inset 0 2px 0 0 var(--wood-light);
+    }
+
+    .hud-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .hud-logo-icon {
+      width: 34px;
+      height: 34px;
+      background: var(--wood-mid);
+      border: 2px solid var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 0 0 2px var(--gold-mid);
+    }
+
+    .hud-title-wrap {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+    }
+
+    .hud-title {
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 900;
+      color: var(--gold-bright);
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+
+    .hud-subtitle {
+      font-size: 11px;
+      color: var(--sand-bg);
+      opacity: 0.9;
+      white-space: nowrap;
+    }
+
+    .hud-stats {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hud-stat {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 4px 10px;
+      background-color: rgba(35, 23, 16, 0.55);
+      border: 2px solid var(--wood-light);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .hud-stat-label {
+      color: #d8c39b;
+      font-size: 11px;
+    }
+
+    .hud-stat-value {
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: #fff6dc;
+    }
+
+    .hud-stat-value.warn {
+      color: #ff9c7a;
+    }
+
+    .hud-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .hud-actions .pixel-btn {
+      min-height: 36px;
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+
+    /* MAIN WORKSPACE GRID */
+    .main-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 295px;
+      gap: 10px;
+      padding: 10px;
+      align-items: stretch;
+    }
+
+    .left-stage {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    /* CENTER MARKET */
+    .market-container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--wood-dark);
+      border: 3px solid var(--ink);
+      box-shadow: 0 4px 0 rgba(20, 12, 6, 0.45);
+    }
+
+    .market-rumor-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 6px 12px;
+      background-color: var(--parchment-deep);
+      border-bottom: 3px solid var(--ink);
+      font-size: 13px;
+      color: var(--ink);
+    }
+
+    .rumor-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .rumor-tag {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 11px;
+      color: var(--wood-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      flex-shrink: 0;
+    }
+
+    .rumor-text {
+      font-weight: 600;
+      color: var(--ink);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .rumor-next-btn {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border: 2px solid var(--ink);
+      background-color: var(--parchment);
+      color: var(--ink);
+      flex-shrink: 0;
+    }
+
+    .rumor-next-btn:hover {
+      background-color: #fff8e6;
+    }
+
+    .market-canvas-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 7;
+      min-height: 240px;
+      background-color: var(--ocean-mid);
+      overflow: hidden;
+    }
+
+    #market-canvas {
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    /* Floating pixel-art merchant booth cards strip integrated cleanly below canvas */
+    .booth-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      padding: 8px;
+      background-color: var(--wood-mid);
+      border-top: 3px solid var(--ink);
+    }
+
+    .booth-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: 8px 10px;
+      text-align: left;
+      background-color: var(--parchment);
+      border: 3px solid var(--ink);
+      box-shadow: inset 0 -3px 0 0 var(--parchment-deep);
+      transition: transform 90ms ease, background-color 120ms ease;
+    }
+
+    .booth-card:hover {
+      background-color: #fff8e6;
+      transform: translateY(-2px);
+    }
+
+    .booth-card.selected {
+      background-color: #fff6d1;
+      box-shadow:
+        inset 0 0 0 3px var(--gold-mid),
+        0 0 0 2px var(--gold-bright);
+    }
+
+    .booth-card.sold-out {
+      background-color: #dcd1b8;
+      opacity: 0.78;
+    }
+
+    .booth-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .booth-name {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 900;
+      color: var(--ink);
+    }
+
+    .booth-stock {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--emerald-ink);
+    }
+
+    .booth-card.sold-out .booth-stock {
+      color: var(--crimson);
+    }
+
+    .booth-offer-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ink-soft);
+      padding-top: 4px;
+      border-top: 2px dashed rgba(35, 23, 16, 0.2);
+    }
+
+    .booth-offer-side {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .booth-arrow {
+      font-family: var(--font-display);
+      font-weight: 900;
+      color: var(--gold-dark);
+    }
+
+    /* BOTTOM PANELS (Inventory + Trading) */
+    .bottom-panels {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 12px;
+      background-color: var(--wood-mid);
+      color: var(--gold-bright);
+      border-bottom: 3px solid var(--ink);
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+    }
+
+    .panel-header-meta {
+      font-size: 11px;
+      color: var(--parchment);
+      font-weight: 600;
+    }
+
+    .panel-body {
+      padding: 12px;
+    }
+
+    /* Inventory Panel */
+    .inventory-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .inv-slot {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      background-color: var(--sand-bg);
+      border: 2px solid var(--wood-dark);
+      transition: transform 150ms ease, background-color 150ms ease;
+    }
+
+    .inv-slot.has-item {
+      background-color: #fff8e5;
+      border-color: var(--ink);
+    }
+
+    .inv-slot.empty-item {
+      opacity: 0.55;
+    }
+
+    .inv-slot.flash {
+      transform: scale(1.04);
+      background-color: #ffe9a3;
+    }
+
+    .inv-icon-box {
+      width: 34px;
+      height: 34px;
+      flex-shrink: 0;
+      background-color: var(--parchment-deep);
+      border: 2px solid var(--wood-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .inv-meta {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+
+    .inv-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .inv-qty {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 900;
+      color: var(--wood-dark);
+    }
+
+    /* Trading Panel */
+    .trade-panel-body {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .trade-merchant-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid rgba(35, 23, 16, 0.16);
+    }
+
+    .trade-merchant-id {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .merchant-portrait-box {
+      width: 46px;
+      height: 46px;
+      flex-shrink: 0;
+      background-color: var(--sand-bg);
+      border: 2px solid var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .trade-merchant-name {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--ink);
+    }
+
+    .trade-merchant-role {
+      font-size: 12px;
+      color: var(--ink-soft);
+    }
+
+    .trade-stock-text {
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--emerald-ink);
+    }
+
+    .trade-stock-text.out {
+      color: var(--crimson);
+    }
+
+    .trade-exchange-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    .trade-box {
+      padding: 8px 10px;
+      background-color: var(--sand-bg);
+      border: 2px solid var(--wood-dark);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .trade-box-label {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--wood-dark);
+    }
+
+    .trade-item-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .trade-item-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .trade-item-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .trade-req-status {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .trade-req-status.ok {
+      color: var(--emerald-ink);
+    }
+
+    .trade-req-status.missing {
+      color: var(--crimson);
+    }
+
+    .trade-center-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--wood-dark);
+      padding: 0 2px;
+    }
+
+    .trade-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .trade-feedback {
+      flex: 1;
+      min-width: 180px;
+      padding: 7px 10px;
+      font-size: 13px;
+      font-weight: 600;
+      background-color: var(--parchment-deep);
+      border: 2px solid var(--wood-dark);
+      color: var(--ink);
+    }
+
+    .trade-feedback.success {
+      background-color: var(--emerald-soft);
+      border-color: var(--emerald-ink);
+      color: var(--emerald-ink);
+    }
+
+    .trade-feedback.error {
+      background-color: var(--crimson-soft);
+      border-color: var(--crimson);
+      color: var(--crimson);
+    }
+
+    .trade-confirm-btn {
+      min-width: 130px;
+      min-height: 44px;
+      font-size: 15px;
+    }
+
+    /* RIGHT SIDEBAR */
+    .right-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .mission-detail-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .mission-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px dashed rgba(35, 23, 16, 0.22);
+    }
+
+    .mission-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .mission-label {
+      color: var(--ink-soft);
+      font-size: 12px;
+    }
+
+    .mission-val {
+      font-weight: 700;
+      color: var(--ink);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .target-card {
+      margin-top: 8px;
+      padding: 8px 10px;
+      background-color: var(--sand-bg);
+      border: 2px solid var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .target-card.complete {
+      background-color: var(--emerald-soft);
+      border-color: var(--emerald-ink);
+    }
+
+    .companion-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .companion-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .companion-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .companion-avatar {
+      width: 56px;
+      height: 56px;
+      flex-shrink: 0;
+      background-color: var(--ocean-light);
+      border: 3px solid var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .companion-name {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .companion-role {
+      font-size: 12px;
+      color: var(--ink-soft);
+    }
+
+    .dialogue-box {
+      position: relative;
+      padding: 10px 12px;
+      background-color: #fff9ea;
+      border: 2px solid var(--ink);
+      font-size: 13px;
+      line-height: 1.48;
+      color: var(--ink);
+      min-height: 92px;
+    }
+
+    .companion-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .companion-actions .pixel-btn {
+      flex: 1;
+      min-height: 40px;
+      font-size: 12px;
+      padding: 6px 10px;
+    }
+
+    /* MODALS */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background-color: rgba(18, 11, 7, 0.78);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-box {
+      width: 100%;
+      max-width: 620px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background-color: var(--parchment);
+      border: 4px solid var(--ink);
+      box-shadow:
+        inset 0 0 0 3px var(--gold-mid),
+        inset 0 0 0 6px var(--wood-dark),
+        0 12px 32px rgba(0, 0, 0, 0.65);
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background-color: var(--wood-dark);
+      color: var(--gold-bright);
+      border-bottom: 3px solid var(--ink);
+    }
+
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .modal-close {
+      min-width: 36px;
+      min-height: 36px;
+      padding: 4px 10px;
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 15px;
+      background-color: var(--parchment);
+      color: var(--ink);
+      border: 2px solid var(--ink);
+    }
+
+    .modal-body {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .encyclopedia-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .ency-card {
+      padding: 12px;
+      background-color: var(--sand-bg);
+      border: 2px solid var(--ink);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .ency-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .ency-sprite-wrap {
+      width: 44px;
+      height: 44px;
+      background-color: var(--parchment);
+      border: 2px solid var(--wood-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .ency-item-title {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 14px;
+    }
+
+    .ency-item-sub {
+      font-size: 11px;
+      color: var(--wood-mid);
+      font-weight: 700;
+    }
+
+    .ency-desc {
+      font-size: 12px;
+      line-height: 1.45;
+      color: var(--ink-soft);
+    }
+
+    .settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      background-color: var(--sand-bg);
+      border: 2px solid var(--wood-dark);
+    }
+
+    .settings-label-title {
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .settings-label-sub {
+      font-size: 12px;
+      color: var(--ink-soft);
+    }
+
+    .outcome-banner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 10px;
+      padding: 8px 4px;
+    }
+
+    .outcome-stars {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 4px 0;
+    }
+
+    .outcome-stats {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .outcome-stat-box {
+      padding: 10px 8px;
+      background-color: var(--sand-bg);
+      border: 2px solid var(--wood-dark);
+      text-align: center;
+    }
+
+    .outcome-stat-num {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--ink);
+    }
+
+    .outcome-stat-lbl {
+      font-size: 11px;
+      color: var(--ink-soft);
+    }
+
+    .modal-footer-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+      padding-top: 6px;
+    }
+
+    .tutorial-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .tutorial-step {
+      display: flex;
+      gap: 10px;
+      padding: 10px 12px;
+      background-color: var(--sand-bg);
+      border: 2px solid var(--wood-dark);
+      align-items: flex-start;
+    }
+
+    .tutorial-num {
+      width: 26px;
+      height: 26px;
+      flex-shrink: 0;
+      background-color: var(--wood-dark);
+      color: var(--gold-bright);
+      font-family: var(--font-display);
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--ink);
+    }
+
+    /* Responsive adjustments for tablet & mobile */
+    @media (max-width: 1040px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+      .right-sidebar {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .app-viewport {
+        padding: 4px;
+        align-items: flex-start;
+      }
+      .top-hud {
+        padding: 8px 10px;
+      }
+      .hud-stats {
+        width: 100%;
+        justify-content: space-between;
+        gap: 6px;
+      }
+      .hud-stat {
+        flex: 1;
+        justify-content: center;
+        padding: 4px 6px;
+        font-size: 12px;
+      }
+      .booth-strip {
+        grid-template-columns: 1fr;
+      }
+      .bottom-panels {
+        grid-template-columns: 1fr;
+      }
+      .right-sidebar {
+        grid-template-columns: 1fr;
+      }
+      .trade-exchange-row {
+        grid-template-columns: 1fr;
+      }
+      .trade-center-arrow {
+        transform: rotate(90deg);
+        padding: 2px 0;
+      }
+      .encyclopedia-grid {
+        grid-template-columns: 1fr;
+      }
+      .outcome-stats {
+        grid-template-columns: 1fr;
+      }
+      .rumor-text {
+        white-space: normal;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-viewport">
+    <main class="game-frame" aria-label="Ancient Merchant Game">
+
+      <!-- TITLE SCREEN -->
+      <section id="title-screen" class="title-screen" aria-label="Title Screen">
+        <canvas id="title-bg-canvas" class="title-bg-canvas" width="480" height="270"></canvas>
+        <div class="title-scrim"></div>
+        <div class="title-content">
+          <div class="title-plaque">
+            <div class="title-kicker">Gorontalo Coastal Barter Puzzle</div>
+            <h1 class="title-main">ANCIENT MERCHANT</h1>
+            <div class="title-sub">Jejak Barter Gorontalo</div>
+            <p class="title-desc">
+              Step into Pasar Desa Pesisir on the shores of Tomini Bay. Trade coastal salt with local artisans,
+              track merchant stock, and forge an Iron Sword within three turns.
+            </p>
+            <div class="title-actions">
+              <button id="btn-start-game" class="pixel-btn pixel-btn-gold title-btn-lg" type="button">
+                Start Game
+              </button>
+              <button id="btn-continue-game" class="pixel-btn title-btn-lg" type="button" style="display: none;">
+                Continue Run
+              </button>
+              <button id="btn-title-tutorial" class="pixel-btn pixel-btn-wood title-btn-lg" type="button">
+                How to Play
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="title-hint-bar">
+          Select a Merchant Booth · Inspect Trade Offer · Confirm Barter within 3 Turns · Esc for Menu
+        </div>
+      </section>
+
+      <!-- ACTIVE GAME SHELL -->
+      <section id="game-shell" class="game-shell" aria-label="Marketplace Game Interface">
+
+        <!-- TOP HUD -->
+        <header class="top-hud">
+          <div class="hud-brand">
+            <div class="hud-logo-icon" aria-hidden="true">
+              <canvas data-sprite="sword" data-scale="2" width="32" height="32"></canvas>
+            </div>
+            <div class="hud-title-wrap">
+              <span class="hud-title">ANCIENT MERCHANT</span>
+              <span class="hud-subtitle">Jejak Barter Gorontalo</span>
+            </div>
+          </div>
+
+          <div class="hud-stats">
+            <div class="hud-stat" title="Current coastal weather">
+              <canvas data-sprite="sun" data-scale="1.5" width="24" height="24" aria-hidden="true"></canvas>
+              <div>
+                <span class="hud-stat-label">Weather:</span>
+                <span id="hud-weather" class="hud-stat-value">Sunny</span>
+              </div>
+            </div>
+            <div class="hud-stat" title="Transactions remaining">
+              <canvas data-sprite="hourglass" data-scale="1.5" width="24" height="24" aria-hidden="true"></canvas>
+              <div>
+                <span class="hud-stat-label">Turns:</span>
+                <span id="hud-turns" class="hud-stat-value tabular">3 / 3</span>
+              </div>
+            </div>
+            <div class="hud-stat" title="Level mission target">
+              <canvas data-sprite="sword" data-scale="1.5" width="24" height="24" aria-hidden="true"></canvas>
+              <div>
+                <span class="hud-stat-label">Target:</span>
+                <span id="hud-target" class="hud-stat-value tabular">Iron Sword (0/1)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hud-actions">
+            <button id="btn-sound-quick" class="pixel-btn pixel-btn-wood" type="button" aria-label="Toggle Sound">
+              <canvas id="hud-sound-icon" data-sprite="soundOn" data-scale="1.5" width="24" height="24" aria-hidden="true"></canvas>
+              <span id="hud-sound-label">Sound On</span>
+            </button>
+            <button id="btn-encyclopedia" class="pixel-btn" type="button">
+              <canvas data-sprite="book" data-scale="1.5" width="24" height="24" aria-hidden="true"></canvas>
+              <span>Encyclopedia</span>
+            </button>
+            <button id="btn-settings" class="pixel-btn" type="button">
+              <canvas data-sprite="gear" data-scale="1.5" width="24" height="24" aria-hidden="true"></canvas>
+              <span>Settings</span>
+            </button>
+          </div>
+        </header>
+
+        <!-- MAIN WORKSPACE -->
+        <div class="main-grid">
+
+          <!-- LEFT & CENTER STAGE -->
+          <div class="left-stage">
+
+            <!-- CENTER MARKET -->
+            <section class="market-container" aria-label="Pasar Desa Pesisir Marketplace">
+              <div class="market-rumor-bar" role="status" aria-live="polite">
+                <div class="rumor-left">
+                  <canvas data-sprite="scroll" data-scale="1.5" width="24" height="24" aria-hidden="true"></canvas>
+                  <span class="rumor-tag">Market Rumor:</span>
+                  <span id="rumor-text" class="rumor-text">The Blacksmith needs fresh coastal fish and dry firewood before lighting the forge.</span>
+                </div>
+                <button id="btn-next-rumor" class="rumor-next-btn" type="button">Next Rumor</button>
+              </div>
+
+              <div class="market-canvas-wrap">
+                <canvas id="market-canvas" width="480" height="210" aria-label="Interactive pixel-art marketplace"></canvas>
+              </div>
+
+              <!-- Interactive Booth Panels -->
+              <div id="booth-strip" class="booth-strip" role="listbox" aria-label="Market Merchants"></div>
+            </section>
+
+            <!-- BOTTOM LEFT & CENTER -->
+            <div class="bottom-panels">
+
+              <!-- BOTTOM LEFT: INVENTORY -->
+              <section class="pixel-panel" aria-label="Player Inventory">
+                <div class="panel-header">
+                  <span>INVENTORY</span>
+                  <span id="inv-total-count" class="panel-header-meta tabular">2 items</span>
+                </div>
+                <div class="panel-body">
+                  <div id="inventory-grid" class="inventory-grid"></div>
+                </div>
+              </section>
+
+              <!-- BOTTOM CENTER: TRADING PANEL -->
+              <section class="pixel-panel" aria-label="Merchant Trading Panel">
+                <div class="panel-header">
+                  <span>BARTER COUNTER</span>
+                  <span id="trade-turn-cost" class="panel-header-meta">1 Turn per Trade</span>
+                </div>
+                <div id="trade-panel-body" class="panel-body trade-panel-body"></div>
+              </section>
+
+            </div>
+          </div>
+
+          <!-- RIGHT SIDEBAR: MISSION + COMPANION -->
+          <aside class="right-sidebar" aria-label="Mission and Companion">
+
+            <!-- Level Conditions & Target -->
+            <section class="pixel-panel">
+              <div class="panel-header">
+                <span>LEVEL 1</span>
+                <span class="panel-header-meta">Pasar Desa Pesisir</span>
+              </div>
+              <div class="panel-body">
+                <div class="mission-detail-list">
+                  <div class="mission-row">
+                    <span class="mission-label">Mission</span>
+                    <span class="mission-val">Obtain 1 Iron Sword</span>
+                  </div>
+                  <div class="mission-row">
+                    <span class="mission-label">Turn Limit</span>
+                    <span id="side-turns" class="mission-val tabular">3 Remaining</span>
+                  </div>
+                  <div class="mission-row">
+                    <span class="mission-label">Weather</span>
+                    <span class="mission-val">Sunny (Clear Sea)</span>
+                  </div>
+                  <div class="mission-row">
+                    <span class="mission-label">Reward</span>
+                    <span class="mission-val">
+                      <canvas data-sprite="star" data-scale="1.25" width="20" height="20" aria-hidden="true"></canvas>
+                      <span>Harbor Crest</span>
+                    </span>
+                  </div>
+                </div>
+
+                <div id="target-card" class="target-card">
+                  <div class="inv-icon-box">
+                    <canvas data-sprite="sword" data-scale="2" width="32" height="32" aria-hidden="true"></canvas>
+                  </div>
+                  <div>
+                    <div style="font-size: 11px; color: var(--wood-mid); font-weight: 700;">TARGET ITEM</div>
+                    <div style="font-size: 14px; font-weight: 800;">Iron Sword</div>
+                    <div id="side-target-progress" style="font-size: 12px; color: var(--ink-soft);" class="tabular">Progress: 0 / 1</div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Companion Character & Dialogue -->
+            <section class="pixel-panel companion-panel">
+              <div class="panel-header">
+                <span>COMPANION GUIDE</span>
+                <span class="panel-header-meta">Gorontalo</span>
+              </div>
+              <div class="companion-body">
+                <div>
+                  <div class="companion-profile">
+                    <div class="companion-avatar">
+                      <canvas id="companion-canvas" width="48" height="48" aria-label="Ka'ani portrait"></canvas>
+                    </div>
+                    <div>
+                      <div class="companion-name">Ka'ani</div>
+                      <div class="companion-role">Harbor Barter Apprentice</div>
+                    </div>
+                  </div>
+                  <div id="companion-dialogue" class="dialogue-box" style="margin-top: 10px;" aria-live="polite">
+                    Welcome to Pasar Desa Pesisir! We brought 2 sacks of sea salt. Let's check what the Fisherman and Woodcutter offer first.
+                  </div>
+                </div>
+
+                <div class="companion-actions">
+                  <button id="btn-tutorial" class="pixel-btn" type="button">Tutorial</button>
+                  <button id="btn-restart-side" class="pixel-btn pixel-btn-wood" type="button">Restart</button>
+                </div>
+              </div>
+            </section>
+
+          </aside>
+
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ENCYCLOPEDIA MODAL -->
+  <div id="modal-encyclopedia" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="ency-modal-title">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h2 id="ency-modal-title" class="modal-title">Barter Encyclopedia</h2>
+        <button class="modal-close" type="button" data-close-modal="modal-encyclopedia" aria-label="Close Encyclopedia">X</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 13px; color: var(--ink-soft); line-height: 1.45;">
+          Coastal markets around Tomini Bay historically relied on direct exchange of sea salt, dried or fresh catch, timber, and forged iron tools.
+        </p>
+        <div id="encyclopedia-grid" class="encyclopedia-grid"></div>
+        <div class="modal-footer-actions">
+          <button class="pixel-btn pixel-btn-gold" type="button" data-close-modal="modal-encyclopedia">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS MODAL -->
+  <div id="modal-settings" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
+    <div class="modal-box" style="max-width: 480px;">
+      <div class="modal-head">
+        <h2 id="settings-modal-title" class="modal-title">Settings</h2>
+        <button class="modal-close" type="button" data-close-modal="modal-settings" aria-label="Close Settings">X</button>
+      </div>
+      <div class="modal-body">
+        <div class="settings-row">
+          <div>
+            <div class="settings-label-title">Sound Effects</div>
+            <div class="settings-label-sub">16-bit Web Audio chimes and trade feedback</div>
+          </div>
+          <button id="btn-toggle-sound" class="pixel-btn pixel-btn-green" type="button">On</button>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label-title">Tutorial Guide</div>
+            <div class="settings-label-sub">View step-by-step barter instructions</div>
+          </div>
+          <button id="btn-open-tutorial-from-settings" class="pixel-btn" type="button">Open Guide</button>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label-title">Restart Current Level</div>
+            <div class="settings-label-sub">Reset turns to 3 and Salt to x2</div>
+          </div>
+          <button id="btn-restart-from-settings" class="pixel-btn pixel-btn-wood" type="button">Restart</button>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label-title">Clear Saved Progress</div>
+            <div class="settings-label-sub">Erase LocalStorage scores and saved run</div>
+          </div>
+          <button id="btn-clear-save" class="pixel-btn" type="button">Clear Save</button>
+        </div>
+        <div class="modal-footer-actions">
+          <button id="btn-back-title" class="pixel-btn" type="button">Title Screen</button>
+          <button class="pixel-btn pixel-btn-gold" type="button" data-close-modal="modal-settings">Resume</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TUTORIAL MODAL -->
+  <div id="modal-tutorial" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="tutorial-modal-title">
+    <div class="modal-box" style="max-width: 540px;">
+      <div class="modal-head">
+        <h2 id="tutorial-modal-title" class="modal-title">How to Barter</h2>
+        <button class="modal-close" type="button" data-close-modal="modal-tutorial" aria-label="Close Tutorial">X</button>
+      </div>
+      <div class="modal-body">
+        <div class="tutorial-steps">
+          <div class="tutorial-step">
+            <div class="tutorial-num">1</div>
+            <div>
+              <strong>Inspect the Three Merchants</strong>
+              <p style="font-size: 13px; color: var(--ink-soft); margin-top: 3px;">
+                Click any booth in the harbor marketplace (Fisherman, Woodcutter, or Blacksmith) to see what items they request and offer.
+              </p>
+            </div>
+          </div>
+          <div class="tutorial-step">
+            <div class="tutorial-num">2</div>
+            <div>
+              <strong>Plan Your 3 Turns</strong>
+              <p style="font-size: 13px; color: var(--ink-soft); margin-top: 3px;">
+                You begin with <strong>Salt x2</strong> and <strong>3 turns</strong>. Every trade uses 1 turn and reduces that merchant's stock.
+              </p>
+            </div>
+          </div>
+          <div class="tutorial-step">
+            <div class="tutorial-num">3</div>
+            <div>
+              <strong>Chain Trades to the Iron Sword</strong>
+              <p style="font-size: 13px; color: var(--ink-soft); margin-top: 3px;">
+                Trade goods step-by-step until you hold both materials required by the Blacksmith, then forge the <strong>Iron Sword</strong>!
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer-actions">
+          <button class="pixel-btn pixel-btn-gold" type="button" data-close-modal="modal-tutorial">Got It</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VICTORY MODAL -->
+  <div id="modal-victory" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="victory-modal-title">
+    <div class="modal-box" style="max-width: 500px;">
+      <div class="modal-head">
+        <h2 id="victory-modal-title" class="modal-title">Mission Completed!</h2>
+      </div>
+      <div class="modal-body">
+        <div class="outcome-banner">
+          <div class="inv-icon-box" style="width: 64px; height: 64px;">
+            <canvas data-sprite="sword" data-scale="3.5" width="56" height="56" aria-hidden="true"></canvas>
+          </div>
+          <div style="font-family: var(--font-display); font-size: 19px; font-weight: 900; color: var(--emerald-ink);">
+            Iron Sword Obtained!
+          </div>
+          <p style="font-size: 13px; color: var(--ink-soft); max-width: 380px; line-height: 1.45;">
+            Through keen coastal barter across Pasar Desa Pesisir, you gathered fresh catch and timber to forge the Blacksmith's finest blade.
+          </p>
+          <div id="victory-stars" class="outcome-stars" aria-label="3 Stars Earned"></div>
+        </div>
+
+        <div class="outcome-stats">
+          <div class="outcome-stat-box">
+            <div id="victory-score" class="outcome-stat-num tabular">1200</div>
+            <div class="outcome-stat-lbl">Score</div>
+          </div>
+          <div class="outcome-stat-box">
+            <div id="victory-turns-used" class="outcome-stat-num tabular">3 / 3</div>
+            <div class="outcome-stat-lbl">Turns Used</div>
+          </div>
+          <div class="outcome-stat-box">
+            <div id="victory-best-score" class="outcome-stat-num tabular">1200</div>
+            <div class="outcome-stat-lbl">Best Score</div>
+          </div>
+        </div>
+
+        <div class="modal-footer-actions" style="justify-content: center;">
+          <button id="btn-victory-play-again" class="pixel-btn" type="button">Play Again</button>
+          <button id="btn-victory-continue" class="pixel-btn pixel-btn-gold" type="button">Continue</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAILURE MODAL -->
+  <div id="modal-failure" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="failure-modal-title">
+    <div class="modal-box" style="max-width: 480px;">
+      <div class="modal-head" style="background-color: #6b221c;">
+        <h2 id="failure-modal-title" class="modal-title" style="color: #ffe7c2;">Market Closed</h2>
+      </div>
+      <div class="modal-body">
+        <div class="outcome-banner">
+          <div class="inv-icon-box" style="width: 56px; height: 56px;">
+            <canvas data-sprite="hourglass" data-scale="3" width="48" height="48" aria-hidden="true"></canvas>
+          </div>
+          <div style="font-family: var(--font-display); font-size: 18px; font-weight: 900; color: var(--crimson);">
+            Mission Incomplete
+          </div>
+          <p id="failure-reason" style="font-size: 13px; color: var(--ink-soft); line-height: 1.45;">
+            Evening tide arrived before you could obtain the Iron Sword. Plan your barter sequence and try again!
+          </p>
+        </div>
+        <div class="modal-footer-actions" style="justify-content: center;">
+          <button id="btn-failure-retry" class="pixel-btn pixel-btn-gold" type="button">Try Again</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      /* =========================================================================
+         1. GAME DATA & SPRITE DEFINITIONS (Embedded Pixel Art + Gorontalo Lore)
+         ========================================================================= */
+      var ITEMS = {
+        salt: {
+          id: "salt",
+          name: "Salt",
+          localName: "Garam Pesisir",
+          origin: "Tomini Salt Pans",
+          role: "Base Barter Commodity",
+          description: "Sun-dried coastal sea salt packed in woven leaf pouches. Prized across Gorontalo villages for preserving fish and seasoning daily meals."
+        },
+        fish: {
+          id: "fish",
+          name: "Fresh Fish",
+          localName: "Ikan Segar",
+          origin: "Tomini Bay Pier",
+          role: "Intermediate Provision",
+          description: "Silver coastal catch hauled ashore at dawn by traditional outrigger perahu boats. Essential nourishment for hardworking village craftspeople."
+        },
+        firewood: {
+          id: "firewood",
+          name: "Firewood",
+          localName: "Kayu Bakar",
+          origin: "Coastal Ridge",
+          role: "Forge Fuel",
+          description: "Seasoned hardwood bundles split cleanly by the ridge woodcutter. Burns hot and steady to keep the blacksmith's charcoal furnace glowing."
+        },
+        sword: {
+          id: "sword",
+          name: "Iron Sword",
+          localName: "Pedang Besi",
+          origin: "Village Smithy",
+          role: "Mission Target",
+          description: "A finely tempered blade hammered over glowing embers and quenched in coastal water. Ready for guards and sea-route expeditions."
+        }
+      };
+
+      var RUMORS = [
+        "The Blacksmith will only light the forge once he has both Fresh Fish and dry Firewood.",
+        "Sea Salt from the morning tide is sought after by both the Fisherman and the Woodcutter.",
+        "Each merchant booth carries only 1 unit of stock during Pasar Desa Pesisir.",
+        "Plan all 3 turns carefully: two trades gather supplies, the third forges the Iron Sword!"
+      ];
+
+      /* 16x16 Pixel Sprite Matrices */
+      var PALETTE = {
+        ".": null,
+        "K": "#231710", // deep ink
+        "W": "#fff9eb", // warm white
+        "S": "#efe0b9", // sand
+        "B": "#8c5a32", // wood brown
+        "D": "#54321c", // dark brown
+        "L": "#c68b52", // light wood
+        "G": "#d39a2b", // muted gold
+        "Y": "#f4d263", // bright gold
+        "O": "#e07a2c", // forge orange
+        "R": "#b3382c", // crimson
+        "C": "#4ea5bd", // ocean cyan
+        "U": "#235c7a", // deep ocean
+        "I": "#a9b7c2", // iron mid
+        "H": "#dce6ee", // iron highlight
+        "M": "#5d6a75", // iron shadow
+        "E": "#478342", // leaf green
+        "P": "#79b45d", // bright green
+        "F": "#e8b48a", // skin light
+        "T": "#c6865c"  // skin tan
+      };
+
+      var SPRITES = {
+        salt: [
+          "................",
+          "......KKKK......",
+          ".....KWWWWK.....",
+          ".....KSSSSK.....",
+          "......KKKK......",
+          "....KKGGGGKK....",
+          "...KWWWWWWWWK...",
+          "..KWWWWSSWWWWK..",
+          "..KWWWSSSSWWWK..",
+          "..KWWSSSSSSWWK..",
+          "..KWWSSSSSSWWK..",
+          "..KWWWSSSSWWWK..",
+          "...KWWWWWWWWK...",
+          "...KSSSSSSSSK...",
+          "....KKKKKKKK....",
+          "................"
+        ],
+        fish: [
+          "................",
+          "................",
+          "..........KKK...",
+          "........KKCCCK..",
+          "..KK..KKCHHHCK..",
+          ".KCCKKCHHHHCK...",
+          ".KCCCHHHWKHHCK..",
+          "..KCCHHHKKHCK...",
+          "..KCCHHHHHCCK...",
+          ".KCCKKCCCCCK....",
+          ".KCK..KKCCK.....",
+          "..K.....KK......",
+          "................",
+          "................",
+          "................",
+          "................"
+        ],
+        firewood: [
+          "................",
+          ".......KKKK.....",
+          "......KLLLLK....",
+          "....KKDDDDLLK...",
+          "...KBBBBBBDDK...",
+          "..KLLLLBBBBKK...",
+          ".KLLSSKBBBBK....",
+          ".KSSSKBBDDK.....",
+          ".KLLKBBBBKLLK...",
+          "..KKKBBBKLSSSK..",
+          "....KDDKBBLLK...",
+          ".....KKKBBBBK...",
+          "........KKKK....",
+          "................",
+          "................",
+          "................"
+        ],
+        sword: [
+          "................",
+          "............KKK.",
+          "...........KHHK.",
+          "..........KHIIK.",
+          ".........KHIIK..",
+          "........KHIIK...",
+          ".......KHIIK....",
+          "......KHIIK.....",
+          "...KKKHIIK......",
+          "..KGGGHIK.......",
+          "...KGYGK........",
+          "...KBDK.........",
+          "..KBDK..........",
+          ".KGGK...........",
+          ".KKK............",
+          "................"
+        ],
+        sun: [
+          ".......YY.......",
+          "..Y....YY....Y..",
+          "...Y..KKKK..Y...",
+          "....KKYYYYKK....",
+          "...KYYYYYYYYK...",
+          "..KYYGGGGGGYYK..",
+          "YYKYYGYYYYGYYKYY",
+          "YYKYYGYYYYGYYKYY",
+          "..KYYGGGGGGYYK..",
+          "...KYYYYYYYYK...",
+          "....KKYYYYKK....",
+          "...Y..KKKK..Y...",
+          "..Y....YY....Y..",
+          ".......YY.......",
+          "................",
+          "................"
+        ],
+        hourglass: [
+          "................",
+          "..KKKKKKKKKKKK..",
+          "..KGGGGGGGGGGK..",
+          "...KWWWWWWWWK...",
+          "...KWYYYYYYWK...",
+          "....KWYYYYWK....",
+          ".....KWYYWK.....",
+          "......KKKK......",
+          ".....KWYYWK.....",
+          "....KWWYYWWK....",
+          "...KWWYYYYWWK...",
+          "...KWYYYYYYWK...",
+          "..KGGGGGGGGGGK..",
+          "..KKKKKKKKKKKK..",
+          "................",
+          "................"
+        ],
+        star: [
+          ".......KK.......",
+          "......KYYK......",
+          "......KYYK......",
+          ".KKKKKKYYKKKKKK.",
+          "KYYYYYYYYYYYYYYK",
+          ".KYYYYYYYYYYYYK.",
+          "..KYYYYGGGGYYK..",
+          "...KYYYGGGGYK...",
+          "...KYYYYYYYYK...",
+          "..KYYYYKKYYYYK..",
+          ".KYYYYK..KYYYYK.",
+          ".KYYKK....KKYYK.",
+          ".KKK........KKK.",
+          "................",
+          "................",
+          "................"
+        ],
+        starEmpty: [
+          ".......KK.......",
+          "......KMMK......",
+          "......KMMK......",
+          ".KKKKKKMMKKKKKK.",
+          "KMMMMMMMMMMMMMMK",
+          ".KMMMMMMMMMMMMK.",
+          "..KMMMMMMMMMMK..",
+          "...KMMMMMMMMK...",
+          "...KMMMMMMMMK...",
+          "..KMMMMKKMMMMK..",
+          ".KMMMMK..KMMMMK.",
+          ".KMMKK....KKMMK.",
+          ".KKK........KKK.",
+          "................",
+          "................",
+          "................"
+        ],
+        book: [
+          "................",
+          "..KKKKKKKKKKK...",
+          ".KRRRRRRRRRRWK..",
+          ".KRRRRRRRRRRWK..",
+          ".KRRRRGGGRRRWK..",
+          ".KRRRRGYGRRRWK..",
+          ".KRRRRGGGRRRWK..",
+          ".KRRRRRRRRRRWK..",
+          ".KRRRRRRRRRRWK..",
+          ".KRRRRRRRRRRWK..",
+          ".KDDDDDDDDDDWK..",
+          ".KWWWWWWWWWWWK..",
+          "..KKKKKKKKKKK...",
+          "................",
+          "................",
+          "................"
+        ],
+        gear: [
+          "................",
+          "......KKKK......",
+          "....KKIIIIKK....",
+          "...KIIKKKKIIK...",
+          "..KIIK....KIIK..",
+          ".KIIK..KK..KIIK.",
+          ".KIIK.KMMK.KIIK.",
+          ".KIIK..KK..KIIK.",
+          "..KIIK....KIIK..",
+          "...KIIKKKKIIK...",
+          "....KKIIIIKK....",
+          "......KKKK......",
+          "................",
+          "................",
+          "................",
+          "................"
+        ],
+        scroll: [
+          "................",
+          "....KKKKKKKKK...",
+          "...KSSSSSSSSSK..",
+          "..KSSKKKKKKSSK..",
+          "..KSSSSSSSSSSK..",
+          "..KSSKKKKKSSSK..",
+          "..KSSSSSSSSSSK..",
+          "..KSSKKKKKKSSK..",
+          "..KSSSSSSSSSSK..",
+          "..KGGGGGGGGGGK..",
+          "...KKKKKKKKKK...",
+          "................",
+          "................",
+          "................",
+          "................",
+          "................"
+        ],
+        soundOn: [
+          "................",
+          ".......KK.......",
+          "......KIIK..Y...",
+          "....KKIIIK...Y..",
+          "..KKIIIIIK.Y..Y.",
+          ".KIIIIIIIK..Y.Y.",
+          ".KIIIIIIIK..Y.Y.",
+          ".KIIIIIIIK..Y.Y.",
+          "..KKIIIIIK.Y..Y.",
+          "....KKIIIK...Y..",
+          "......KIIK..Y...",
+          ".......KK.......",
+          "................",
+          "................",
+          "................",
+          "................"
+        ],
+        soundOff: [
+          "................",
+          ".......KK.......",
+          "......KMMK.R..R.",
+          "....KKMMMK..RR..",
+          "..KKMMMMMK..RR..",
+          ".KMMMMMMMK.R..R.",
+          ".KMMMMMMMK......",
+          ".KMMMMMMMK.R..R.",
+          "..KKMMMMMK..RR..",
+          "....KKMMMK..RR..",
+          "......KMMK.R..R.",
+          ".......KK.......",
+          "................",
+          "................",
+          "................",
+          "................"
+        ],
+        fisherman: [
+          "......KKKK......",
+          "....KKGGGGKK....",
+          "...KGGGGGGGGK...",
+          "..KKKKKKKKKKKK..",
+          "...KFFFFFFFFK...",
+          "...KFKFFFFKFK...",
+          "...KFFFFFFFFK...",
+          "....KTTTTTTK....",
+          "...KKCCCCCCKK...",
+          "..KCCCCCCCCCCK..",
+          "..KCCUUUUUUCCK..",
+          "..KTTCCCCCCCTK..",
+          "...KKDDDDDDKK...",
+          "...KDDK..KDDK...",
+          "...KKK....KKK...",
+          "................"
+        ],
+        woodcutter: [
+          ".....KKKKKK.....",
+          "....KEEEEEEK....",
+          "...KEEEEEEEEK...",
+          "...KKKKKKKKKK...",
+          "...KTTTTTTTTK...",
+          "...KTKTTTTKTK...",
+          "...KTTTTTTTTK...",
+          "....KDDDDDDK....",
+          "..KKBBBBBBBBKK..",
+          ".KBBBBGGGGGBBBK.",
+          ".KBBDDDDDDDDBBK.",
+          ".KTTBBBBBBBBTTK.",
+          "...KKDDDDDDKK...",
+          "...KDDK..KDDK...",
+          "...KKK....KKK...",
+          "................"
+        ],
+        blacksmith: [
+          ".....KKKKKK.....",
+          "....KDDDDDDK....",
+          "...KRRRRRRRRK...",
+          "...KKKKKKKKKK...",
+          "...KTTTTTTTTK...",
+          "...KTKTTTTKTK...",
+          "...KTTTTTTTTK...",
+          "....KDDDDDDK....",
+          "..KKMMMMMMMMKK..",
+          ".KMMDDDDDDDDMMK.",
+          ".KMMDDDDDDDDMMK.",
+          ".KTTMMMMMMMMTTK.",
+          "...KKDDDDDDKK...",
+          "...KDDK..KDDK...",
+          "...KKK....KKK...",
+          "................"
+        ],
+        kaani: [
+          ".....KKKKKK.....",
+          "....KGGGGGGK....",
+          "...KRRRRRRRRK...",
+          "...KKKKKKKKKK...",
+          "...KFFFFFFFFK...",
+          "...KFKFFFFKFK...",
+          "...KFFFFFFFFK...",
+          "....KTTTTTTK....",
+          "..KKYYYYYYYYKK..",
+          ".KYYCCCCCCCCYYK.",
+          ".KYYCCCCCCCCYYK.",
+          ".KFFYYYYYYYYFFK.",
+          "...KKUUUUUUKK...",
+          "...KUUK..KUUK...",
+          "...KKK....KKK...",
+          "................"
+        ]
+      };
+
+      function drawSpriteOnCanvas(canvas, spriteKey, customScale) {
+        if (!canvas) return;
+        var matrix = SPRITES[spriteKey];
+        if (!matrix) return;
+        var ctx = canvas.getContext("2d");
+        ctx.imageSmoothingEnabled = false;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        var scale = customScale || Math.floor(Math.min(canvas.width, canvas.height) / 16);
+        var ox = Math.floor((canvas.width - 16 * scale) / 2);
+        var oy = Math.floor((canvas.height - 16 * scale) / 2);
+        for (var y = 0; y < matrix.length; y++) {
+          var row = matrix[y];
+          for (var x = 0; x < row.length; x++) {
+            var color = PALETTE[row[x]];
+            if (color) {
+              ctx.fillStyle = color;
+              ctx.fillRect(ox + x * scale, oy + y * scale, scale, scale);
+            }
+          }
+        }
+      }
+
+      function renderAllStaticSprites() {
+        var nodes = document.querySelectorAll("canvas[data-sprite]");
+        for (var i = 0; i < nodes.length; i++) {
+          var el = nodes[i];
+          var key = el.getAttribute("data-sprite");
+          var scale = parseFloat(el.getAttribute("data-scale")) || 2;
+          drawSpriteOnCanvas(el, key, scale);
+        }
+        drawSpriteOnCanvas(document.getElementById("companion-canvas"), "kaani", 3);
+      }
+
+      /* =========================================================================
+         2. AUDIO FX (Procedural Web Audio 16-bit Chimes — Zero External Files)
+         ========================================================================= */
+      var AudioFX = (function () {
+        var ctx = null;
+        var enabled = true;
+
+        function ensureCtx() {
+          if (!enabled) return null;
+          if (!ctx) {
+            var AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (AudioContext) {
+              ctx = new AudioContext();
+            }
+          }
+          if (ctx && ctx.state === "suspended") {
+            ctx.resume().catch(function () {});
+          }
+          return ctx;
+        }
+
+        function tone(freq, duration, type, delay, vol) {
+          var ac = ensureCtx();
+          if (!ac) return;
+          var start = ac.currentTime + (delay || 0);
+          var osc = ac.createOscillator();
+          var gain = ac.createGain();
+          osc.type = type || "square";
+          osc.frequency.setValueAtTime(freq, start);
+          gain.gain.setValueAtTime(vol || 0.06, start);
+          gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
+          osc.connect(gain);
+          gain.connect(ac.destination);
+          osc.start(start);
+          osc.stop(start + duration + 0.02);
+        }
+
+        return {
+          setEnabled: function (val) {
+            enabled = !!val;
+          },
+          isEnabled: function () {
+            return enabled;
+          },
+          playSelect: function () {
+            tone(523.25, 0.07, "triangle", 0, 0.06);
+          },
+          playTrade: function () {
+            tone(523.25, 0.08, "square", 0, 0.05);
+            tone(659.25, 0.08, "square", 0.07, 0.05);
+            tone(783.99, 0.14, "square", 0.14, 0.06);
+          },
+          playError: function () {
+            tone(196, 0.12, "sawtooth", 0, 0.05);
+            tone(164.8, 0.15, "sawtooth", 0.1, 0.05);
+          },
+          playVictory: function () {
+            tone(523.25, 0.1, "square", 0, 0.06);
+            tone(659.25, 0.1, "square", 0.1, 0.06);
+            tone(783.99, 0.1, "square", 0.2, 0.06);
+            tone(1046.5, 0.32, "square", 0.3, 0.07);
+          },
+          playDefeat: function () {
+            tone(392, 0.16, "triangle", 0, 0.06);
+            tone(349.2, 0.16, "triangle", 0.16, 0.06);
+            tone(293.7, 0.3, "triangle", 0.32, 0.06);
+          }
+        };
+      })();
+
+      /* =========================================================================
+         3. SaveManager — LocalStorage Persistence
+         ========================================================================= */
+      var SaveManager = (function () {
+        var STORAGE_KEY = "ancient_merchant_gorontalo_save_v1";
+
+        function defaultData() {
+          return {
+            soundEnabled: true,
+            tutorialSeen: false,
+            bestScore: 0,
+            bestStars: 0,
+            completedLevels: [],
+            activeRun: null
+          };
+        }
+
+        function load() {
+          try {
+            var raw = window.localStorage.getItem(STORAGE_KEY);
+            if (!raw) return defaultData();
+            var parsed = JSON.parse(raw);
+            var base = defaultData();
+            for (var k in parsed) {
+              if (Object.prototype.hasOwnProperty.call(parsed, k)) {
+                base[k] = parsed[k];
+              }
+            }
+            return base;
+          } catch (e) {
+            return defaultData();
+          }
+        }
+
+        function save(data) {
+          try {
+            window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+          } catch (e) {
+            // Safe fallback when storage is unavailable
+          }
+        }
+
+        function clear() {
+          try {
+            window.localStorage.removeItem(STORAGE_KEY);
+          } catch (e) {
+            // Safe fallback
+          }
+        }
+
+        return {
+          load: load,
+          save: save,
+          clear: clear
+        };
+      })();
+
+      /* =========================================================================
+         4. LevelManager — Level 1 Definition & Merchant Setup
+         ========================================================================= */
+      var LevelManager = (function () {
+        var LEVEL_1 = {
+          id: 1,
+          title: "Pasar Desa Pesisir",
+          weather: "Sunny",
+          maxTurns: 3,
+          targetItem: "sword",
+          targetQty: 1,
+          startingInventory: {
+            salt: 2,
+            fish: 0,
+            firewood: 0,
+            sword: 0
+          },
+          merchants: [
+            {
+              id: "fisherman",
+              name: "Fisherman",
+              role: "Nelayan Teluk Tomini",
+              sprite: "fisherman",
+              boothX: 30,
+              boothY: 94,
+              boothW: 118,
+              boothH: 102,
+              requires: [{ item: "salt", qty: 1 }],
+              gives: [{ item: "fish", qty: 1 }],
+              maxStock: 1,
+              greeting: "Morning tide brought silver fish! Swap 1 pouch of sea salt and this fresh catch is yours."
+            },
+            {
+              id: "woodcutter",
+              name: "Woodcutter",
+              role: "Penebang Kayu Pesisir",
+              sprite: "woodcutter",
+              boothX: 181,
+              boothY: 92,
+              boothW: 118,
+              boothH: 104,
+              requires: [{ item: "salt", qty: 1 }],
+              gives: [{ item: "firewood", qty: 1 }],
+              maxStock: 1,
+              greeting: "I split dry coastal hardwood at sunrise. Give me 1 Salt for preservation and take this firewood!"
+            },
+            {
+              id: "blacksmith",
+              name: "Blacksmith",
+              role: "Pandai Besi Desa",
+              sprite: "blacksmith",
+              boothX: 332,
+              boothY: 88,
+              boothW: 122,
+              boothH: 108,
+              requires: [
+                { item: "fish", qty: 1 },
+                { item: "firewood", qty: 1 }
+              ],
+              gives: [{ item: "sword", qty: 1 }],
+              maxStock: 1,
+              greeting: "My anvil is ready, traveler! Bring 1 Fresh Fish for supper and 1 Firewood for the bellows—then I will forge your Iron Sword."
+            }
+          ]
+        };
+
+        return {
+          getLevelConfig: function () {
+            // Deep clone to ensure clean reset
+            return JSON.parse(JSON.stringify(LEVEL_1));
+          }
+        };
+      })();
+
+      /* =========================================================================
+         5. InventoryManager — Strict Non-Negative Item State
+         ========================================================================= */
+      var InventoryManager = (function () {
+        var items = { salt: 0, fish: 0, firewood: 0, sword: 0 };
+
+        return {
+          init: function (initial) {
+            items = {
+              salt: Math.max(0, (initial && initial.salt) || 0),
+              fish: Math.max(0, (initial && initial.fish) || 0),
+              firewood: Math.max(0, (initial && initial.firewood) || 0),
+              sword: Math.max(0, (initial && initial.sword) || 0)
+            };
+          },
+          getAll: function () {
+            return {
+              salt: items.salt,
+              fish: items.fish,
+              firewood: items.firewood,
+              sword: items.sword
+            };
+          },
+          getCount: function (itemId) {
+            return items[itemId] || 0;
+          },
+          hasAll: function (requirements) {
+            if (!Array.isArray(requirements)) return false;
+            for (var i = 0; i < requirements.length; i++) {
+              var req = requirements[i];
+              if ((items[req.item] || 0) < req.qty || req.qty < 0) {
+                return false;
+              }
+            }
+            return true;
+          },
+          applyExchange: function (requires, gives) {
+            if (!this.hasAll(requires)) {
+              return false;
+            }
+            // Validate no negative outcome
+            for (var i = 0; i < requires.length; i++) {
+              if (items[requires[i].item] - requires[i].qty < 0) {
+                return false;
+              }
+            }
+            for (var j = 0; j < requires.length; j++) {
+              items[requires[j].item] -= requires[j].qty;
+            }
+            for (var k = 0; k < gives.length; k++) {
+              items[gives[k].item] = (items[gives[k].item] || 0) + gives[k].qty;
+            }
+            return true;
+          },
+          totalCount: function () {
+            return items.salt + items.fish + items.firewood + items.sword;
+          }
+        };
+      })();
+
+      /* =========================================================================
+         6. TradeManager — Validation, Duplicate Prevention & Execution
+         ========================================================================= */
+      var TradeManager = (function () {
+        var isLocked = false;
+
+        return {
+          canTrade: function (merchant, turnsRemaining) {
+            if (!merchant) {
+              return { valid: false, reason: "Select a merchant booth in the market." };
+            }
+            if (isLocked) {
+              return { valid: false, reason: "Completing barter..." };
+            }
+            if (turnsRemaining <= 0) {
+              return { valid: false, reason: "No turns remaining." };
+            }
+            if (merchant.stock <= 0) {
+              return { valid: false, reason: merchant.name + " is out of stock." };
+            }
+            if (!InventoryManager.hasAll(merchant.requires)) {
+              var missing = [];
+              for (var i = 0; i < merchant.requires.length; i++) {
+                var r = merchant.requires[i];
+                var have = InventoryManager.getCount(r.item);
+                if (have < r.qty) {
+                  missing.push((r.qty - have) + " " + ITEMS[r.item].name);
+                }
+              }
+              return { valid: false, reason: "Missing: " + missing.join(" + ") + "." };
+            }
+            return { valid: true, reason: "Ready to barter with " + merchant.name + "." };
+          },
+          hasAnyValidTrade: function (merchants, turnsRemaining) {
+            if (turnsRemaining <= 0) return false;
+            for (var i = 0; i < merchants.length; i++) {
+              var m = merchants[i];
+              if (m.stock > 0 && InventoryManager.hasAll(m.requires)) {
+                return true;
+              }
+            }
+            return false;
+          },
+          executeTrade: function (merchant, turnsRemaining, onSuccess, onUnlock) {
+            var check = this.canTrade(merchant, turnsRemaining);
+            if (!check.valid) {
+              return { ok: false, message: check.reason };
+            }
+            isLocked = true;
+            var applied = InventoryManager.applyExchange(merchant.requires, merchant.gives);
+            if (!applied) {
+              isLocked = false;
+              return { ok: false, message: "Invalid inventory state prevented." };
+            }
+            merchant.stock = Math.max(0, merchant.stock - 1);
+            if (typeof onSuccess === "function") {
+              onSuccess(merchant);
+            }
+            window.setTimeout(function () {
+              isLocked = false;
+              if (typeof onUnlock === "function") {
+                onUnlock();
+              }
+            }, 340);
+            return { ok: true, message: "Trade complete!" };
+          },
+          resetLock: function () {
+            isLocked = false;
+          }
+        };
+      })();
+
+      /* =========================================================================
+         7. MarketSceneRenderer — 16-Bit Pixel-Art Marketplace & Title Canvas
+         ========================================================================= */
+      var MarketSceneRenderer = (function () {
+        var marketCanvas = null;
+        var titleCanvas = null;
+        var mCtx = null;
+        var tCtx = null;
+        var animTime = 0;
+        var lastTs = 0;
+        var particles = [];
+        var embers = [];
+
+        for (var e = 0; e < 14; e++) {
+          embers.push({
+            x: 416 + (e % 5) * 3,
+            y: 118 - (e * 3) % 24,
+            speed: 8 + (e % 4) * 4,
+            phase: e * 0.7
+          });
+        }
+
+        function spawnTradeBurst(merchant) {
+          var cx = merchant.boothX + Math.floor(merchant.boothW / 2);
+          var cy = merchant.boothY + 26;
+          for (var i = 0; i < 16; i++) {
+            var angle = (Math.PI * 2 * i) / 16;
+            particles.push({
+              x: cx,
+              y: cy,
+              vx: Math.cos(angle) * (18 + (i % 3) * 10),
+              vy: Math.sin(angle) * (14 + (i % 2) * 8) - 20,
+              life: 0.75,
+              maxLife: 0.75,
+              color: i % 2 === 0 ? "#f4d263" : "#fff9eb"
+            });
+          }
+        }
+
+        function drawPixelPalm(ctx, baseX, baseY, swayOffset) {
+          // Trunk
+          for (var seg = 0; seg < 10; seg++) {
+            var tx = baseX + Math.floor(Math.sin(seg * 0.25) * 3 + (seg > 6 ? swayOffset * 0.4 : 0));
+            var ty = baseY - seg * 5;
+            ctx.fillStyle = seg % 2 === 0 ? "#6b4226" : "#80502f";
+            ctx.fillRect(tx, ty, 5, 5);
+            ctx.fillStyle = "#231710";
+            ctx.fillRect(tx - 1, ty, 1, 5);
+            ctx.fillRect(tx + 5, ty, 1, 5);
+          }
+          var topX = baseX + 2 + Math.floor(swayOffset * 0.6);
+          var topY = baseY - 50;
+          // Coconuts
+          ctx.fillStyle = "#4a2c18";
+          ctx.fillRect(topX - 2, topY + 3, 3, 3);
+          ctx.fillRect(topX + 2, topY + 4, 3, 3);
+          // Fronds
+          var fronds = [
+            [-18, 4], [-14, -4], [-4, -9], [8, -8], [16, -2], [18, 6]
+          ];
+          for (var f = 0; f < fronds.length; f++) {
+            var fx = fronds[f][0];
+            var fy = fronds[f][1];
+            var steps = 6;
+            for (var s = 1; s <= steps; s++) {
+              var px = topX + Math.floor((fx * s) / steps);
+              var py = topY + Math.floor((fy * s) / steps + (s * s) * 0.14);
+              ctx.fillStyle = s % 2 === 0 ? "#478342" : "#6ca653";
+              ctx.fillRect(px - 2, py - 1, 4, 3);
+            }
+          }
+        }
+
+        function drawPerahuBoat(ctx, x, y, bob) {
+          var by = Math.floor(y + bob);
+          // Hull
+          ctx.fillStyle = "#231710";
+          ctx.fillRect(x - 1, by + 4, 34, 6);
+          ctx.fillStyle = "#8c5a32";
+          ctx.fillRect(x, by + 4, 32, 5);
+          ctx.fillStyle = "#d39a2b";
+          ctx.fillRect(x + 2, by + 5, 28, 2);
+          // Outrigger & Mast
+          ctx.fillStyle = "#4a2c18";
+          ctx.fillRect(x + 15, by - 14, 2, 18);
+          // Triangular sail
+          ctx.fillStyle = "#fff6dc";
+          for (var row = 0; row < 12; row++) {
+            ctx.fillRect(x + 17, by - 13 + row, Math.max(1, 12 - row), 1);
+          }
+          ctx.fillStyle = "#b3382c";
+          ctx.fillRect(x + 17, by - 13, 12, 2);
+        }
+
+        function drawDulohupaHouse(ctx, x, y, w, h) {
+          // Stilts
+          ctx.fillStyle = "#4a2c18";
+          ctx.fillRect(x + 4, y + h - 8, 4, 10);
+          ctx.fillRect(x + w - 8, y + h - 8, 4, 10);
+          // Wooden walls
+          ctx.fillStyle = "#231710";
+          ctx.fillRect(x - 1, y - 1, w + 2, h - 6);
+          ctx.fillStyle = "#a36c40";
+          ctx.fillRect(x, y, w, h - 8);
+          ctx.fillStyle = "#7a4c2a";
+          ctx.fillRect(x, y + 10, w, 2);
+          // Window & Door
+          ctx.fillStyle = "#352014";
+          ctx.fillRect(x + 8, y + 6, 8, 8);
+          ctx.fillStyle = "#f4d263";
+          ctx.fillRect(x + 10, y + 8, 4, 4);
+          // Pitched thatch/terracotta roof
+          for (var r = 0; r < 14; r++) {
+            ctx.fillStyle = r % 3 === 0 ? "#8a3622" : "#a8482e";
+            ctx.fillRect(x - 6 + r, y - 14 + r, w + 12 - r * 2, 2);
+          }
+          ctx.fillStyle = "#d39a2b";
+          ctx.fillRect(x + Math.floor(w / 2) - 2, y - 16, 4, 3);
+        }
+
+        function drawBackdropScene(ctx, width, height, t) {
+          // 1. Sky
+          ctx.fillStyle = "#88cfe0";
+          ctx.fillRect(0, 0, width, 46);
+          ctx.fillStyle = "#a8dfec";
+          ctx.fillRect(0, 46, width, 24);
+
+          // Sun
+          ctx.fillStyle = "#f4d263";
+          ctx.fillRect(416, 12, 18, 18);
+          ctx.fillStyle = "#fff6dc";
+          ctx.fillRect(420, 16, 10, 10);
+
+          // Drifting pixel clouds
+          var c1 = Math.floor((t * 6) % (width + 60)) - 50;
+          var c2 = Math.floor((t * 4 + 220) % (width + 60)) - 50;
+          ctx.fillStyle = "#fff9eb";
+          ctx.fillRect(c1, 16, 32, 8);
+          ctx.fillRect(c1 + 6, 12, 18, 6);
+          ctx.fillRect(c2, 26, 26, 7);
+          ctx.fillRect(c2 + 5, 22, 14, 5);
+
+          // Distant Gorontalo emerald hills
+          ctx.fillStyle = "#3f7a52";
+          for (var hx = 0; hx < width; hx += 4) {
+            var hh = 14 + Math.floor(Math.sin(hx * 0.025) * 6 + Math.cos(hx * 0.05) * 4);
+            ctx.fillRect(hx, 64 - hh, 4, hh);
+          }
+
+          // 2. Tomini Bay Ocean
+          ctx.fillStyle = "#1d5e7d";
+          ctx.fillRect(0, 64, width, 28);
+          ctx.fillStyle = "#2b7fa1";
+          ctx.fillRect(0, 74, width, 18);
+
+          // Sparkling waves
+          var waveShift = Math.floor(t * 10);
+          ctx.fillStyle = "#8ad4df";
+          for (var wx = 0; wx < width; wx += 24) {
+            var px = (wx + waveShift) % width;
+            ctx.fillRect(px, 68, 8, 2);
+            ctx.fillRect((px + 12) % width, 80, 10, 2);
+          }
+
+          // Fishing Perahu boats
+          drawPerahuBoat(ctx, 56, 62, Math.sin(t * 2.1) * 1.5);
+          drawPerahuBoat(ctx, 310, 60, Math.cos(t * 1.8) * 1.5);
+
+          // Wooden Harbor Pier on Left
+          ctx.fillStyle = "#4a2c18";
+          ctx.fillRect(10, 82, 92, 6);
+          ctx.fillStyle = "#8c5a32";
+          ctx.fillRect(12, 80, 88, 4);
+          for (var p = 18; p <= 90; p += 18) {
+            ctx.fillStyle = "#3a2112";
+            ctx.fillRect(p, 84, 4, 12);
+          }
+
+          // 3. Sandy Shoreline & Market Plaza
+          ctx.fillStyle = "#d9c290";
+          ctx.fillRect(0, 92, width, 14);
+          ctx.fillStyle = "#efe0b9";
+          ctx.fillRect(0, 102, width, height - 102);
+
+          // Cobblestone / Warm Earth Path
+          ctx.fillStyle = "#c9ae78";
+          ctx.fillRect(0, 166, width, 34);
+          ctx.fillStyle = "#b5965d";
+          for (var sx = 12; sx < width; sx += 26) {
+            ctx.fillRect(sx, 172, 14, 6);
+            ctx.fillRect(sx + 10, 184, 12, 6);
+          }
+
+          // Traditional Village Houses in background
+          drawDulohupaHouse(ctx, 134, 70, 44, 30);
+          drawDulohupaHouse(ctx, 278, 70, 46, 30);
+
+          // Swaying Palm Trees
+          var sway = Math.sin(t * 1.6) * 2;
+          drawPixelPalm(ctx, 18, 104, sway);
+          drawPixelPalm(ctx, 456, 106, -sway);
+        }
+
+        function drawMerchantBooth(ctx, merchant, isSelected, t) {
+          var x = merchant.boothX;
+          var y = merchant.boothY;
+          var w = merchant.boothW;
+          var h = merchant.boothH;
+
+          // Booth shadow
+          ctx.fillStyle = "rgba(35, 23, 16, 0.22)";
+          ctx.fillRect(x + 4, y + h - 6, w - 8, 8);
+
+          // Wooden back posts
+          ctx.fillStyle = "#3a2112";
+          ctx.fillRect(x + 8, y + 20, 6, h - 26);
+          ctx.fillRect(x + w - 14, y + 20, 6, h - 26);
+
+          // Awning colors per merchant
+          var stripeA = "#2a7b9b";
+          var stripeB = "#fff6dc";
+          if (merchant.id === "woodcutter") {
+            stripeA = "#478342";
+            stripeB = "#f2cb57";
+          } else if (merchant.id === "blacksmith") {
+            stripeA = "#8a3622";
+            stripeB = "#c68b52";
+          }
+
+          // Awning roof
+          ctx.fillStyle = "#231710";
+          ctx.fillRect(x + 2, y + 8, w - 4, 18);
+          for (var i = 0; i < w - 8; i += 8) {
+            ctx.fillStyle = (Math.floor(i / 8) % 2 === 0) ? stripeA : stripeB;
+            ctx.fillRect(x + 4 + i, y + 10, Math.min(8, w - 8 - i), 14);
+          }
+
+          // Merchant-specific props
+          if (merchant.id === "fisherman") {
+            // Hanging fish rack & woven basket
+            ctx.fillStyle = "#4a2c18";
+            ctx.fillRect(x + 12, y + 26, 28, 3);
+            ctx.fillStyle = "#8ad4df";
+            ctx.fillRect(x + 16, y + 29, 4, 9);
+            ctx.fillRect(x + 26, y + 29, 4, 9);
+            ctx.fillStyle = "#c68b52";
+            ctx.fillRect(x + w - 30, y + 54, 16, 12);
+          } else if (merchant.id === "woodcutter") {
+            // Stacked firewood logs & chopping stump
+            ctx.fillStyle = "#6b4226";
+            ctx.fillRect(x + 12, y + 48, 22, 16);
+            ctx.fillStyle = "#efe0b9";
+            ctx.fillRect(x + 14, y + 50, 5, 5);
+            ctx.fillRect(x + 22, y + 50, 5, 5);
+            ctx.fillRect(x + 18, y + 57, 5, 5);
+            // Stump + Axe
+            ctx.fillStyle = "#8c5a32";
+            ctx.fillRect(x + w - 28, y + 54, 14, 12);
+            ctx.fillStyle = "#dce6ee";
+            ctx.fillRect(x + w - 24, y + 47, 6, 5);
+          } else if (merchant.id === "blacksmith") {
+            // Stone furnace & animated fire!
+            ctx.fillStyle = "#4d5259";
+            ctx.fillRect(x + w - 42, y + 24, 30, 42);
+            ctx.fillStyle = "#231710";
+            ctx.fillRect(x + w - 36, y + 40, 18, 18);
+            // Animated fire pixels
+            var flicker = Math.floor(t * 10) % 3;
+            ctx.fillStyle = "#d94b27";
+            ctx.fillRect(x + w - 34, y + 46 - flicker, 14, 12 + flicker);
+            ctx.fillStyle = "#f4d263";
+            ctx.fillRect(x + w - 31, y + 49 - (flicker % 2), 8, 9);
+            // Rising embers
+            for (var eb = 0; eb < embers.length; eb++) {
+              var em = embers[eb];
+              var ey = 118 - ((t * em.speed + eb * 5) % 28);
+              var ex = x + w - 30 + Math.floor(Math.sin(t * 4 + em.phase) * 5);
+              ctx.fillStyle = eb % 2 === 0 ? "#f4d263" : "#e07a2c";
+              ctx.fillRect(ex, Math.floor(ey), 2, 2);
+            }
+            // Anvil
+            ctx.fillStyle = "#5d6a75";
+            ctx.fillRect(x + 14, y + 54, 18, 8);
+            ctx.fillStyle = "#231710";
+            ctx.fillRect(x + 18, y + 62, 10, 6);
+          }
+
+          // Merchant NPC standing behind counter (idle breathing animation)
+          var bobY = Math.round(Math.sin(t * 3 + x) * 1);
+          var npcMatrix = SPRITES[merchant.sprite];
+          var npcX = x + Math.floor(w / 2) - 16;
+          var npcY = y + 28 + bobY;
+          for (var ry = 0; ry < npcMatrix.length; ry++) {
+            var row = npcMatrix[ry];
+            for (var rx = 0; rx < row.length; rx++) {
+              var col = PALETTE[row[rx]];
+              if (col) {
+                ctx.fillStyle = col;
+                ctx.fillRect(npcX + rx * 2, npcY + ry * 2, 2, 2);
+              }
+            }
+          }
+
+          // Wooden Counter Front
+          ctx.fillStyle = "#231710";
+          ctx.fillRect(x + 4, y + 64, w - 8, 28);
+          ctx.fillStyle = "#8c5a32";
+          ctx.fillRect(x + 6, y + 66, w - 12, 24);
+          ctx.fillStyle = "#b9824f";
+          ctx.fillRect(x + 4, y + 64, w - 8, 5);
+
+          // Offered item icon sitting on counter (unless sold out)
+          if (merchant.stock > 0 && merchant.gives && merchant.gives[0]) {
+            var itemMatrix = SPRITES[merchant.gives[0].item];
+            var ix = x + Math.floor(w / 2) - 8;
+            var iy = y + 52;
+            for (var iyRow = 0; iyRow < itemMatrix.length; iyRow++) {
+              var iLine = itemMatrix[iyRow];
+              for (var ixCol = 0; ixCol < iLine.length; ixCol++) {
+                var iColor = PALETTE[iLine[ixCol]];
+                if (iColor) {
+                  ctx.fillStyle = iColor;
+                  ctx.fillRect(ix + ixCol, iy + iyRow, 1, 1);
+                }
+              }
+            }
+          }
+
+          // Selection Highlight & Bouncing Golden Arrow
+          if (isSelected) {
+            ctx.strokeStyle = "#f4d263";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(x + 1, y + 1, w - 2, h - 2);
+            var arrowY = y - 6 + Math.round(Math.sin(t * 6) * 2);
+            var ax = x + Math.floor(w / 2);
+            ctx.fillStyle = "#231710";
+            ctx.fillRect(ax - 5, arrowY - 5, 10, 7);
+            ctx.fillStyle = "#f4d263";
+            ctx.fillRect(ax - 4, arrowY - 4, 8, 3);
+            ctx.fillRect(ax - 2, arrowY - 1, 4, 2);
+            ctx.fillRect(ax - 1, arrowY + 1, 2, 1);
+          }
+        }
+
+        function drawParticles(ctx, dt) {
+          for (var i = particles.length - 1; i >= 0; i--) {
+            var p = particles[i];
+            p.life -= dt;
+            if (p.life <= 0) {
+              particles.splice(i, 1);
+              continue;
+            }
+            p.x += p.vx * dt;
+            p.y += p.vy * dt;
+            p.vy += 45 * dt;
+            ctx.fillStyle = p.color;
+            ctx.fillRect(Math.floor(p.x), Math.floor(p.y), 3, 3);
+          }
+        }
+
+        function tick(ts) {
+          if (!lastTs) lastTs = ts;
+          var dt = Math.min((ts - lastTs) / 1000, 0.05);
+          lastTs = ts;
+          animTime += dt;
+
+          // Render title canvas if visible
+          var titleScreen = document.getElementById("title-screen");
+          if (titleCanvas && titleScreen && titleScreen.style.display !== "none") {
+            tCtx.imageSmoothingEnabled = false;
+            drawBackdropScene(tCtx, titleCanvas.width, titleCanvas.height, animTime);
+          }
+
+          // Render active market canvas
+          if (marketCanvas && mCtx) {
+            mCtx.imageSmoothingEnabled = false;
+            drawBackdropScene(mCtx, marketCanvas.width, marketCanvas.height, animTime);
+            var state = GameManager.getState();
+            for (var i = 0; i < state.merchants.length; i++) {
+              var m = state.merchants[i];
+              drawMerchantBooth(mCtx, m, m.id === state.selectedMerchantId, animTime);
+            }
+            drawParticles(mCtx, dt);
+          }
+
+          window.requestAnimationFrame(tick);
+        }
+
+        return {
+          init: function () {
+            marketCanvas = document.getElementById("market-canvas");
+            titleCanvas = document.getElementById("title-bg-canvas");
+            mCtx = marketCanvas.getContext("2d");
+            tCtx = titleCanvas.getContext("2d");
+
+            marketCanvas.addEventListener("click", function (ev) {
+              var rect = marketCanvas.getBoundingClientRect();
+              var scaleX = marketCanvas.width / rect.width;
+              var scaleY = marketCanvas.height / rect.height;
+              var cx = (ev.clientX - rect.left) * scaleX;
+              var cy = (ev.clientY - rect.top) * scaleY;
+              var merchants = GameManager.getState().merchants;
+              for (var i = 0; i < merchants.length; i++) {
+                var m = merchants[i];
+                if (cx >= m.boothX && cx <= m.boothX + m.boothW && cy >= m.boothY - 10 && cy <= m.boothY + m.boothH) {
+                  GameManager.selectMerchant(m.id);
+                  return;
+                }
+              }
+            });
+
+            window.requestAnimationFrame(tick);
+          },
+          spawnTradeBurst: spawnTradeBurst
+        };
+      })();
+
+      /* =========================================================================
+         8. UIManager — DOM Updates, Panels, Dialogue, Modals
+         ========================================================================= */
+      var UIManager = (function () {
+        var lastInventorySnapshot = { salt: 2, fish: 0, firewood: 0, sword: 0 };
+
+        function createMiniSpriteCanvas(spriteKey, scale, size) {
+          var c = document.createElement("canvas");
+          c.width = size;
+          c.height = size;
+          drawSpriteOnCanvas(c, spriteKey, scale);
+          return c;
+        }
+
+        function renderTopHud(state) {
+          document.getElementById("hud-weather").textContent = state.weather;
+          var turnsEl = document.getElementById("hud-turns");
+          turnsEl.textContent = state.turnsRemaining + " / " + state.maxTurns;
+          turnsEl.classList.toggle("warn", state.turnsRemaining <= 1 && state.outcome === "playing");
+
+          var swordCount = InventoryManager.getCount("sword");
+          document.getElementById("hud-target").textContent = "Iron Sword (" + swordCount + "/1)";
+
+          document.getElementById("side-turns").textContent = state.turnsRemaining + " Remaining";
+          document.getElementById("side-target-progress").textContent = "Progress: " + swordCount + " / 1";
+          document.getElementById("target-card").classList.toggle("complete", swordCount >= 1);
+
+          var soundOn = AudioFX.isEnabled();
+          document.getElementById("hud-sound-label").textContent = soundOn ? "Sound On" : "Muted";
+          drawSpriteOnCanvas(document.getElementById("hud-sound-icon"), soundOn ? "soundOn" : "soundOff", 1.5);
+
+          var toggleBtn = document.getElementById("btn-toggle-sound");
+          if (toggleBtn) {
+            toggleBtn.textContent = soundOn ? "On" : "Off";
+            toggleBtn.className = "pixel-btn " + (soundOn ? "pixel-btn-green" : "");
+          }
+        }
+
+        function renderBoothStrip(state) {
+          var strip = document.getElementById("booth-strip");
+          strip.innerHTML = "";
+          for (var i = 0; i < state.merchants.length; i++) {
+            (function (m) {
+              var card = document.createElement("button");
+              card.type = "button";
+              card.className = "booth-card" +
+                (m.id === state.selectedMerchantId ? " selected" : "") +
+                (m.stock <= 0 ? " sold-out" : "");
+              card.setAttribute("role", "option");
+              card.setAttribute("aria-selected", m.id === state.selectedMerchantId ? "true" : "false");
+
+              var top = document.createElement("div");
+              top.className = "booth-card-top";
+
+              var nameEl = document.createElement("span");
+              nameEl.className = "booth-name";
+              nameEl.textContent = m.name;
+
+              var stockEl = document.createElement("span");
+              stockEl.className = "booth-stock tabular";
+              stockEl.textContent = m.stock > 0 ? "Stock: " + m.stock : "Sold Out";
+
+              top.appendChild(nameEl);
+              top.appendChild(stockEl);
+
+              var offerRow = document.createElement("div");
+              offerRow.className = "booth-offer-row";
+
+              var reqSide = document.createElement("span");
+              reqSide.className = "booth-offer-side";
+              for (var r = 0; r < m.requires.length; r++) {
+                if (r > 0) {
+                  var plus = document.createElement("span");
+                  plus.textContent = "+";
+                  reqSide.appendChild(plus);
+                }
+                reqSide.appendChild(createMiniSpriteCanvas(m.requires[r].item, 1, 16));
+                var rTxt = document.createElement("span");
+                rTxt.textContent = m.requires[r].qty + " " + ITEMS[m.requires[r].item].name;
+                reqSide.appendChild(rTxt);
+              }
+
+              var arrow = document.createElement("span");
+              arrow.className = "booth-arrow";
+              arrow.textContent = "->";
+
+              var giveSide = document.createElement("span");
+              giveSide.className = "booth-offer-side";
+              for (var g = 0; g < m.gives.length; g++) {
+                giveSide.appendChild(createMiniSpriteCanvas(m.gives[g].item, 1, 16));
+                var gTxt = document.createElement("span");
+                gTxt.textContent = m.gives[g].qty + " " + ITEMS[m.gives[g].item].name;
+                giveSide.appendChild(gTxt);
+              }
+
+              offerRow.appendChild(reqSide);
+              offerRow.appendChild(arrow);
+              offerRow.appendChild(giveSide);
+
+              card.appendChild(top);
+              card.appendChild(offerRow);
+              card.addEventListener("click", function () {
+                GameManager.selectMerchant(m.id);
+              });
+              strip.appendChild(card);
+            })(state.merchants[i]);
+          }
+        }
+
+        function renderInventory() {
+          var inv = InventoryManager.getAll();
+          var grid = document.getElementById("inventory-grid");
+          grid.innerHTML = "";
+          var keys = ["salt", "fish", "firewood", "sword"];
+          for (var i = 0; i < keys.length; i++) {
+            var id = keys[i];
+            var qty = inv[id] || 0;
+            var changed = qty !== lastInventorySnapshot[id];
+
+            var slot = document.createElement("div");
+            slot.className = "inv-slot " + (qty > 0 ? "has-item" : "empty-item") + (changed ? " flash" : "");
+
+            var iconBox = document.createElement("div");
+            iconBox.className = "inv-icon-box";
+            iconBox.appendChild(createMiniSpriteCanvas(id, 1.75, 28));
+
+            var meta = document.createElement("div");
+            meta.className = "inv-meta";
+
+            var nameEl = document.createElement("span");
+            nameEl.className = "inv-name";
+            nameEl.textContent = ITEMS[id].name;
+
+            var qtyEl = document.createElement("span");
+            qtyEl.className = "inv-qty tabular";
+            qtyEl.textContent = "x" + qty;
+
+            meta.appendChild(nameEl);
+            meta.appendChild(qtyEl);
+            slot.appendChild(iconBox);
+            slot.appendChild(meta);
+            grid.appendChild(slot);
+          }
+          document.getElementById("inv-total-count").textContent = InventoryManager.totalCount() + " items";
+          lastInventorySnapshot = inv;
+        }
+
+        function renderTradePanel(state) {
+          var body = document.getElementById("trade-panel-body");
+          body.innerHTML = "";
+
+          var merchant = null;
+          for (var i = 0; i < state.merchants.length; i++) {
+            if (state.merchants[i].id === state.selectedMerchantId) {
+              merchant = state.merchants[i];
+              break;
+            }
+          }
+
+          if (!merchant) {
+            var emptyMsg = document.createElement("div");
+            emptyMsg.style.padding = "20px 8px";
+            emptyMsg.style.textAlign = "center";
+            emptyMsg.style.color = "var(--ink-soft)";
+            emptyMsg.textContent = "Select one of the three merchant booths above to inspect their barter offer.";
+            body.appendChild(emptyMsg);
+            return;
+          }
+
+          var check = TradeManager.canTrade(merchant, state.turnsRemaining);
+
+          // Merchant Header
+          var head = document.createElement("div");
+          head.className = "trade-merchant-header";
+
+          var idWrap = document.createElement("div");
+          idWrap.className = "trade-merchant-id";
+
+          var pBox = document.createElement("div");
+          pBox.className = "merchant-portrait-box";
+          pBox.appendChild(createMiniSpriteCanvas(merchant.sprite, 2.5, 40));
+
+          var info = document.createElement("div");
+          var mName = document.createElement("div");
+          mName.className = "trade-merchant-name";
+          mName.textContent = merchant.name;
+          var mRole = document.createElement("div");
+          mRole.className = "trade-merchant-role";
+          mRole.textContent = merchant.role;
+          info.appendChild(mName);
+          info.appendChild(mRole);
+
+          idWrap.appendChild(pBox);
+          idWrap.appendChild(info);
+
+          var stockBadge = document.createElement("div");
+          stockBadge.className = "trade-stock-text tabular" + (merchant.stock <= 0 ? " out" : "");
+          stockBadge.textContent = merchant.stock > 0 ? "Available Stock: " + merchant.stock : "Sold Out";
+
+          head.appendChild(idWrap);
+          head.appendChild(stockBadge);
+          body.appendChild(head);
+
+          // Exchange Row
+          var exRow = document.createElement("div");
+          exRow.className = "trade-exchange-row";
+
+          // Player Gives Box
+          var giveBox = document.createElement("div");
+          giveBox.className = "trade-box";
+          var giveLbl = document.createElement("div");
+          giveLbl.className = "trade-box-label";
+          giveLbl.textContent = "You Give";
+          giveBox.appendChild(giveLbl);
+
+          var reqList = document.createElement("div");
+          reqList.className = "trade-item-list";
+          for (var r = 0; r < merchant.requires.length; r++) {
+            var req = merchant.requires[r];
+            var have = InventoryManager.getCount(req.item);
+            var enough = have >= req.qty;
+
+            var line = document.createElement("div");
+            line.className = "trade-item-line";
+
+            var left = document.createElement("span");
+            left.className = "trade-item-left";
+            left.appendChild(createMiniSpriteCanvas(req.item, 1.25, 20));
+            var txt = document.createElement("span");
+            txt.textContent = req.qty + " " + ITEMS[req.item].name;
+            left.appendChild(txt);
+
+            var stat = document.createElement("span");
+            stat.className = "trade-req-status tabular " + (enough ? "ok" : "missing");
+            stat.textContent = enough ? "Have " + have : "Need " + req.qty + " (Have " + have + ")";
+
+            line.appendChild(left);
+            line.appendChild(stat);
+            reqList.appendChild(line);
+          }
+          giveBox.appendChild(reqList);
+
+          // Center Arrow
+          var centerArrow = document.createElement("div");
+          centerArrow.className = "trade-center-arrow";
+          centerArrow.textContent = "=>";
+
+          // Player Receives Box
+          var recBox = document.createElement("div");
+          recBox.className = "trade-box";
+          var recLbl = document.createElement("div");
+          recLbl.className = "trade-box-label";
+          recLbl.textContent = "You Receive";
+          recBox.appendChild(recLbl);
+
+          var recList = document.createElement("div");
+          recList.className = "trade-item-list";
+          for (var g = 0; g < merchant.gives.length; g++) {
+            var gv = merchant.gives[g];
+            var gLine = document.createElement("div");
+            gLine.className = "trade-item-line";
+            var gLeft = document.createElement("span");
+            gLeft.className = "trade-item-left";
+            gLeft.appendChild(createMiniSpriteCanvas(gv.item, 1.25, 20));
+            var gTxt = document.createElement("span");
+            gTxt.textContent = gv.qty + " " + ITEMS[gv.item].name;
+            gLeft.appendChild(gTxt);
+            gLine.appendChild(gLeft);
+            recList.appendChild(gLine);
+          }
+          recBox.appendChild(recList);
+
+          exRow.appendChild(giveBox);
+          exRow.appendChild(centerArrow);
+          exRow.appendChild(recBox);
+          body.appendChild(exRow);
+
+          // Footer: Feedback + Trade Button
+          var footer = document.createElement("div");
+          footer.className = "trade-footer";
+
+          var fb = document.createElement("div");
+          fb.className = "trade-feedback" + (state.feedbackType ? " " + state.feedbackType : "");
+          fb.textContent = state.feedbackMessage || check.reason;
+
+          var btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "pixel-btn pixel-btn-gold trade-confirm-btn";
+          btn.textContent = "TRADE";
+          btn.disabled = !check.valid || state.outcome !== "playing";
+          btn.addEventListener("click", function () {
+            GameManager.confirmTrade();
+          });
+
+          footer.appendChild(fb);
+          footer.appendChild(btn);
+          body.appendChild(footer);
+        }
+
+        function renderCompanionDialogue(state) {
+          var inv = InventoryManager.getAll();
+          var text = "";
+          if (inv.sword >= 1) {
+            text = "Incredible! The Iron Sword gleams in the sunlight. Our coastal barter journey is complete!";
+          } else if (state.turnsRemaining === 0) {
+            text = "The market bells are ringing and our turns have run out. Let's restart and try a cleaner route.";
+          } else if (inv.fish >= 1 && inv.firewood >= 1) {
+            text = "We have both Fresh Fish and Firewood! Head straight to the Blacksmith to forge the Iron Sword.";
+          } else if (inv.fish >= 1 && inv.firewood === 0) {
+            text = "Great catch! Now trade our remaining 1 Salt with the Woodcutter for Firewood.";
+          } else if (inv.firewood >= 1 && inv.fish === 0) {
+            text = "Solid timber secured! Now trade our remaining 1 Salt with the Fisherman for Fresh Fish.";
+          } else {
+            text = "We hold 2 Salt and have 3 turns. Trade 1 Salt with the Fisherman and 1 Salt with the Woodcutter first!";
+          }
+          document.getElementById("companion-dialogue").textContent = text;
+        }
+
+        function renderEncyclopedia() {
+          var grid = document.getElementById("encyclopedia-grid");
+          grid.innerHTML = "";
+          var keys = ["salt", "fish", "firewood", "sword"];
+          for (var i = 0; i < keys.length; i++) {
+            var item = ITEMS[keys[i]];
+            var card = document.createElement("div");
+            card.className = "ency-card";
+
+            var top = document.createElement("div");
+            top.className = "ency-top";
+
+            var sWrap = document.createElement("div");
+            sWrap.className = "ency-sprite-wrap";
+            sWrap.appendChild(createMiniSpriteCanvas(item.id, 2.25, 36));
+
+            var meta = document.createElement("div");
+            var t = document.createElement("div");
+            t.className = "ency-item-title";
+            t.textContent = item.name;
+            var s = document.createElement("div");
+            s.className = "ency-item-sub";
+            s.textContent = item.localName + " · " + item.origin;
+            meta.appendChild(t);
+            meta.appendChild(s);
+
+            top.appendChild(sWrap);
+            top.appendChild(meta);
+
+            var desc = document.createElement("p");
+            desc.className = "ency-desc";
+            desc.textContent = item.description;
+
+            card.appendChild(top);
+            card.appendChild(desc);
+            grid.appendChild(card);
+          }
+        }
+
+        function openModal(id) {
+          var el = document.getElementById(id);
+          if (el) el.classList.add("open");
+        }
+
+        function closeModal(id) {
+          var el = document.getElementById(id);
+          if (el) el.classList.remove("open");
+        }
+
+        function closeAllModals() {
+          var modals = document.querySelectorAll(".modal-backdrop.open");
+          for (var i = 0; i < modals.length; i++) {
+            modals[i].classList.remove("open");
+          }
+        }
+
+        function showVictoryModal(score, stars, turnsUsed, maxTurns, bestScore) {
+          document.getElementById("victory-score").textContent = String(score);
+          document.getElementById("victory-turns-used").textContent = turnsUsed + " / " + maxTurns;
+          document.getElementById("victory-best-score").textContent = String(bestScore);
+
+          var starsWrap = document.getElementById("victory-stars");
+          starsWrap.innerHTML = "";
+          starsWrap.setAttribute("aria-label", stars + " of 3 Stars Earned");
+          for (var s = 1; s <= 3; s++) {
+            starsWrap.appendChild(createMiniSpriteCanvas(s <= stars ? "star" : "starEmpty", 2.25, 36));
+          }
+          openModal("modal-victory");
+        }
+
+        function showFailureModal(reason) {
+          document.getElementById("failure-reason").textContent = reason;
+          openModal("modal-failure");
+        }
+
+        return {
+          renderAll: function (state) {
+            renderTopHud(state);
+            renderBoothStrip(state);
+            renderInventory();
+            renderTradePanel(state);
+            renderCompanionDialogue(state);
+          },
+          renderRumor: function (text) {
+            document.getElementById("rumor-text").textContent = text;
+          },
+          renderEncyclopedia: renderEncyclopedia,
+          openModal: openModal,
+          closeModal: closeModal,
+          closeAllModals: closeAllModals,
+          showVictoryModal: showVictoryModal,
+          showFailureModal: showFailureModal,
+          showScreen: function (screen) {
+            var title = document.getElementById("title-screen");
+            var game = document.getElementById("game-shell");
+            if (screen === "title") {
+              title.style.display = "flex";
+              game.classList.remove("active");
+            } else {
+              title.style.display = "none";
+              game.classList.add("active");
+            }
+          }
+        };
+      })();
+
+      /* =========================================================================
+         9. GameManager — Central State Machine & Coordinator
+         ========================================================================= */
+      var GameManager = (function () {
+        var saveData = SaveManager.load();
+        var state = {
+          levelId: 1,
+          weather: "Sunny",
+          maxTurns: 3,
+          turnsRemaining: 3,
+          merchants: [],
+          selectedMerchantId: "fisherman",
+          rumorIndex: 0,
+          feedbackMessage: "",
+          feedbackType: "",
+          outcome: "playing" // "playing" | "victory" | "failure"
+        };
+
+        function persistActiveRun() {
+          if (state.outcome === "playing") {
+            saveData.activeRun = {
+              turnsRemaining: state.turnsRemaining,
+              inventory: InventoryManager.getAll(),
+              stocks: state.merchants.map(function (m) {
+                return { id: m.id, stock: m.stock };
+              }),
+              selectedMerchantId: state.selectedMerchantId
+            };
+          } else {
+            saveData.activeRun = null;
+          }
+          SaveManager.save(saveData);
+        }
+
+        function startFreshLevel() {
+          var cfg = LevelManager.getLevelConfig();
+          TradeManager.resetLock();
+          InventoryManager.init(cfg.startingInventory);
+          state.levelId = cfg.id;
+          state.weather = cfg.weather;
+          state.maxTurns = cfg.maxTurns;
+          state.turnsRemaining = cfg.maxTurns;
+          state.merchants = cfg.merchants.map(function (m) {
+            m.stock = m.maxStock;
+            return m;
+          });
+          state.selectedMerchantId = "fisherman";
+          state.feedbackMessage = "Select a merchant and confirm your first barter.";
+          state.feedbackType = "";
+          state.outcome = "playing";
+          UIManager.closeAllModals();
+          UIManager.showScreen("playing");
+          UIManager.renderAll(state);
+          persistActiveRun();
+
+          if (!saveData.tutorialSeen) {
+            saveData.tutorialSeen = true;
+            SaveManager.save(saveData);
+            UIManager.openModal("modal-tutorial");
+          }
+        }
+
+        function resumeSavedRun() {
+          if (!saveData.activeRun) {
+            startFreshLevel();
+            return;
+          }
+          var cfg = LevelManager.getLevelConfig();
+          TradeManager.resetLock();
+          InventoryManager.init(saveData.activeRun.inventory);
+          state.levelId = cfg.id;
+          state.weather = cfg.weather;
+          state.maxTurns = cfg.maxTurns;
+          state.turnsRemaining = saveData.activeRun.turnsRemaining;
+          state.merchants = cfg.merchants.map(function (m) {
+            m.stock = m.maxStock;
+            for (var s = 0; s < saveData.activeRun.stocks.length; s++) {
+              if (saveData.activeRun.stocks[s].id === m.id) {
+                m.stock = saveData.activeRun.stocks[s].stock;
+              }
+            }
+            return m;
+          });
+          state.selectedMerchantId = saveData.activeRun.selectedMerchantId || "fisherman";
+          state.feedbackMessage = "Resumed your coastal market journey.";
+          state.feedbackType = "";
+          state.outcome = "playing";
+          UIManager.closeAllModals();
+          UIManager.showScreen("playing");
+          UIManager.renderAll(state);
+        }
+
+        function getSelectedMerchant() {
+          for (var i = 0; i < state.merchants.length; i++) {
+            if (state.merchants[i].id === state.selectedMerchantId) {
+              return state.merchants[i];
+            }
+          }
+          return null;
+        }
+
+        function checkOutcome() {
+          if (InventoryManager.getCount("sword") >= 1) {
+            state.outcome = "victory";
+            var turnsUsed = state.maxTurns - state.turnsRemaining;
+            var stars = turnsUsed <= 3 ? 3 : 2;
+            var score = 1000 + state.turnsRemaining * 150 + InventoryManager.totalCount() * 100;
+            if (score > saveData.bestScore) saveData.bestScore = score;
+            if (stars > saveData.bestStars) saveData.bestStars = stars;
+            if (saveData.completedLevels.indexOf(1) === -1) {
+              saveData.completedLevels.push(1);
+            }
+            saveData.activeRun = null;
+            SaveManager.save(saveData);
+            AudioFX.playVictory();
+            UIManager.renderAll(state);
+            window.setTimeout(function () {
+              UIManager.showVictoryModal(score, stars, turnsUsed, state.maxTurns, saveData.bestScore);
+            }, 320);
+            return;
+          }
+
+          if (state.turnsRemaining <= 0) {
+            state.outcome = "failure";
+            saveData.activeRun = null;
+            SaveManager.save(saveData);
+            AudioFX.playDefeat();
+            UIManager.renderAll(state);
+            window.setTimeout(function () {
+              UIManager.showFailureModal("All 3 turns were spent before obtaining the Iron Sword.");
+            }, 260);
+            return;
+          }
+
+          if (!TradeManager.hasAnyValidTrade(state.merchants, state.turnsRemaining)) {
+            state.outcome = "failure";
+            saveData.activeRun = null;
+            SaveManager.save(saveData);
+            AudioFX.playDefeat();
+            UIManager.renderAll(state);
+            window.setTimeout(function () {
+              UIManager.showFailureModal("No valid barter paths remain to forge the Iron Sword.");
+            }, 260);
+          }
+        }
+
+        function bindEvents() {
+          // Title screen buttons
+          document.getElementById("btn-start-game").addEventListener("click", function () {
+            AudioFX.playSelect();
+            startFreshLevel();
+          });
+
+          document.getElementById("btn-continue-game").addEventListener("click", function () {
+            AudioFX.playSelect();
+            resumeSavedRun();
+          });
+
+          document.getElementById("btn-title-tutorial").addEventListener("click", function () {
+            AudioFX.playSelect();
+            UIManager.openModal("modal-tutorial");
+          });
+
+          // HUD & Sidebar buttons
+          document.getElementById("btn-encyclopedia").addEventListener("click", function () {
+            AudioFX.playSelect();
+            UIManager.openModal("modal-encyclopedia");
+          });
+
+          document.getElementById("btn-settings").addEventListener("click", function () {
+            AudioFX.playSelect();
+            UIManager.openModal("modal-settings");
+          });
+
+          document.getElementById("btn-tutorial").addEventListener("click", function () {
+            AudioFX.playSelect();
+            UIManager.openModal("modal-tutorial");
+          });
+
+          document.getElementById("btn-restart-side").addEventListener("click", function () {
+            AudioFX.playSelect();
+            startFreshLevel();
+          });
+
+          document.getElementById("btn-next-rumor").addEventListener("click", function () {
+            AudioFX.playSelect();
+            state.rumorIndex = (state.rumorIndex + 1) % RUMORS.length;
+            UIManager.renderRumor(RUMORS[state.rumorIndex]);
+          });
+
+          function toggleSound() {
+            var next = !AudioFX.isEnabled();
+            AudioFX.setEnabled(next);
+            saveData.soundEnabled = next;
+            SaveManager.save(saveData);
+            if (next) AudioFX.playSelect();
+            UIManager.renderAll(state);
+          }
+
+          document.getElementById("btn-sound-quick").addEventListener("click", toggleSound);
+          document.getElementById("btn-toggle-sound").addEventListener("click", toggleSound);
+
+          document.getElementById("btn-open-tutorial-from-settings").addEventListener("click", function () {
+            UIManager.closeModal("modal-settings");
+            UIManager.openModal("modal-tutorial");
+          });
+
+          document.getElementById("btn-restart-from-settings").addEventListener("click", function () {
+            AudioFX.playSelect();
+            startFreshLevel();
+          });
+
+          document.getElementById("btn-clear-save").addEventListener("click", function () {
+            SaveManager.clear();
+            saveData = SaveManager.load();
+            AudioFX.setEnabled(saveData.soundEnabled);
+            document.getElementById("btn-continue-game").style.display = "none";
+            UIManager.closeModal("modal-settings");
+            startFreshLevel();
+          });
+
+          document.getElementById("btn-back-title").addEventListener("click", function () {
+            UIManager.closeAllModals();
+            document.getElementById("btn-continue-game").style.display = saveData.activeRun ? "inline-flex" : "none";
+            UIManager.showScreen("title");
+          });
+
+          document.getElementById("btn-victory-play-again").addEventListener("click", function () {
+            AudioFX.playSelect();
+            startFreshLevel();
+          });
+
+          document.getElementById("btn-victory-continue").addEventListener("click", function () {
+            AudioFX.playSelect();
+            UIManager.closeAllModals();
+            document.getElementById("btn-continue-game").style.display = "none";
+            UIManager.showScreen("title");
+          });
+
+          document.getElementById("btn-failure-retry").addEventListener("click", function () {
+            AudioFX.playSelect();
+            startFreshLevel();
+          });
+
+          // Close modal buttons & backdrop clicks
+          var closeButtons = document.querySelectorAll("[data-close-modal]");
+          for (var i = 0; i < closeButtons.length; i++) {
+            closeButtons[i].addEventListener("click", function () {
+              UIManager.closeModal(this.getAttribute("data-close-modal"));
+            });
+          }
+
+          var backdrops = document.querySelectorAll(".modal-backdrop");
+          for (var j = 0; j < backdrops.length; j++) {
+            backdrops[j].addEventListener("click", function (ev) {
+              if (ev.target === this && this.id !== "modal-victory" && this.id !== "modal-failure") {
+                this.classList.remove("open");
+              }
+            });
+          }
+
+          // Keyboard shortcuts
+          window.addEventListener("keydown", function (ev) {
+            var titleVisible = document.getElementById("title-screen").style.display !== "none";
+            if (titleVisible && (ev.key === "Enter" || ev.key === " ")) {
+              ev.preventDefault();
+              AudioFX.playSelect();
+              startFreshLevel();
+              return;
+            }
+            if (ev.key === "Escape") {
+              var anyOpen = document.querySelector(".modal-backdrop.open");
+              if (anyOpen) {
+                if (anyOpen.id !== "modal-victory" && anyOpen.id !== "modal-failure") {
+                  UIManager.closeAllModals();
+                }
+              } else if (!titleVisible) {
+                UIManager.openModal("modal-settings");
+              }
+            }
+          });
+        }
+
+        return {
+          init: function () {
+            AudioFX.setEnabled(saveData.soundEnabled);
+            renderAllStaticSprites();
+            UIManager.renderEncyclopedia();
+            UIManager.renderRumor(RUMORS[0]);
+
+            // Populate initial state for background rendering
+            var cfg = LevelManager.getLevelConfig();
+            InventoryManager.init(cfg.startingInventory);
+            state.merchants = cfg.merchants.map(function (m) {
+              m.stock = m.maxStock;
+              return m;
+            });
+
+            if (saveData.activeRun) {
+              document.getElementById("btn-continue-game").style.display = "inline-flex";
+            }
+
+            MarketSceneRenderer.init();
+            bindEvents();
+            UIManager.showScreen("title");
+          },
+          getState: function () {
+            return state;
+          },
+          selectMerchant: function (merchantId) {
+            if (state.outcome !== "playing") return;
+            state.selectedMerchantId = merchantId;
+            var m = getSelectedMerchant();
+            state.feedbackMessage = m ? m.greeting : "";
+            state.feedbackType = "";
+            AudioFX.playSelect();
+            UIManager.renderAll(state);
+          },
+          confirmTrade: function () {
+            if (state.outcome !== "playing") return;
+            var merchant = getSelectedMerchant();
+            var result = TradeManager.executeTrade(
+              merchant,
+              state.turnsRemaining,
+              function (tradedMerchant) {
+                state.turnsRemaining = Math.max(0, state.turnsRemaining - 1);
+                var reqText = tradedMerchant.requires.map(function (r) {
+                  return r.qty + " " + ITEMS[r.item].name;
+                }).join(" + ");
+                var giveText = tradedMerchant.gives.map(function (g) {
+                  return g.qty + " " + ITEMS[g.item].name;
+                }).join(" + ");
+                state.feedbackMessage = "Traded " + reqText + " for " + giveText + "!";
+                state.feedbackType = "success";
+                AudioFX.playTrade();
+                MarketSceneRenderer.spawnTradeBurst(tradedMerchant);
+                persistActiveRun();
+                UIManager.renderAll(state);
+                checkOutcome();
+              },
+              function () {
+                UIManager.renderAll(state);
+              }
+            );
+            if (!result.ok) {
+              state.feedbackMessage = result.message;
+              state.feedbackType = "error";
+              AudioFX.playError();
+              UIManager.renderAll(state);
+            }
+          }
+        };
+      })();
+
+      window.addEventListener("DOMContentLoaded", function () {
+        GameManager.init();
+      });
+    })();
+  </script>
+</body>
+</html>
