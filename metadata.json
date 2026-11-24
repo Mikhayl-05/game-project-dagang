@@ -1,6 +1,0 @@
-{
-  "name": "Ancient Merchant: Jejak Barter Gorontalo",
-  "description": "A standalone 16-bit pixel-art educational trading and strategy puzzle game inspired by traditional barter in Gorontalo, Indonesia.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
