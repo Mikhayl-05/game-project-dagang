@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ancient Merchant: Jejak Barter Gorontalo</title>
-  <meta name="description" content="Ancient Merchant: Jejak Barter Gorontalo — A 16-bit pixel-art educational trading and barter strategy puzzle game set in coastal Gorontalo, Indonesia." />
+  <meta name="description" content="Ancient Merchant: Jejak Barter Gorontalo — Gim strategi teka-teki perdagangan dan barter piksel 16-bit bernuansa pesisir Gorontalo, Indonesia." />
   <meta property="og:title" content="Ancient Merchant: Jejak Barter Gorontalo" />
-  <meta property="og:description" content="A 16-bit pixel-art educational trading and barter strategy puzzle game set in coastal Gorontalo, Indonesia." />
+  <meta property="og:description" content="Gim strategi teka-teki perdagangan dan barter piksel 16-bit bernuansa pesisir Gorontalo, Indonesia." />
   <meta property="og:type" content="website" />
   <style>
     :root {
@@ -417,6 +417,16 @@
       white-space: nowrap;
     }
 
+    button.hud-stat {
+      cursor: pointer;
+      transition: background-color 120ms ease, transform 90ms ease;
+    }
+
+    button.hud-stat:hover {
+      background-color: rgba(74, 44, 24, 0.85);
+      transform: translateY(-1px);
+    }
+
     .hud-stat-label {
       color: #d8c39b;
       font-size: 11px;
@@ -430,6 +440,10 @@
 
     .hud-stat-value.warn {
       color: #ff9c7a;
+    }
+
+    .hud-stat-value.rainy {
+      color: #8ad4df;
     }
 
     .hud-actions {
@@ -1282,43 +1296,43 @@
 </head>
 <body>
   <div class="app-viewport">
-    <main class="game-frame" aria-label="Ancient Merchant Game">
+    <main class="game-frame" aria-label="Gim Ancient Merchant">
 
-      <!-- TITLE SCREEN -->
-      <section id="title-screen" class="title-screen" aria-label="Title Screen">
+      <!-- LAYAR JUDUL -->
+      <section id="title-screen" class="title-screen" aria-label="Layar Judul">
         <canvas id="title-bg-canvas" class="title-bg-canvas" width="480" height="270"></canvas>
         <div class="title-scrim"></div>
         <div class="title-content">
           <div class="title-plaque">
-            <div class="title-kicker">Gorontalo Coastal Barter Puzzle</div>
+            <div class="title-kicker">Teka-Teki Barter Pesisir Gorontalo</div>
             <h1 class="title-main">ANCIENT MERCHANT</h1>
             <div class="title-sub">Jejak Barter Gorontalo</div>
             <p class="title-desc">
-              Step into Pasar Desa Pesisir on the shores of Tomini Bay. Trade coastal salt with local artisans,
-              track merchant stock, and forge an Iron Sword within three turns.
+              Melangkahlah ke Pasar Desa Pesisir di tepian Teluk Tomini. Tukarkan garam laut dengan perajin lokal,
+              pantau stok pedagang, dan tempa Pedang Besi dalam tiga giliran.
             </p>
             <div class="title-actions">
               <button id="btn-start-game" class="pixel-btn pixel-btn-gold title-btn-lg" type="button">
-                Start Game
+                Mulai Permainan
               </button>
               <button id="btn-continue-game" class="pixel-btn title-btn-lg" type="button" style="display: none;">
-                Continue Run
+                Lanjutkan Permainan
               </button>
               <button id="btn-title-tutorial" class="pixel-btn pixel-btn-wood title-btn-lg" type="button">
-                How to Play
+                Cara Bermain
               </button>
             </div>
           </div>
         </div>
         <div class="title-hint-bar">
-          Select a Merchant Booth · Inspect Trade Offer · Confirm Barter within 3 Turns · Esc for Menu
+          Pilih Kios Pedagang · Periksa Penawaran Barter · Selesaikan dalam 3 Giliran · Esc untuk Menu
         </div>
       </section>
 
-      <!-- ACTIVE GAME SHELL -->
-      <section id="game-shell" class="game-shell" aria-label="Marketplace Game Interface">
+      <!-- ANTARMUKA PERMAINAN -->
+      <section id="game-shell" class="game-shell" aria-label="Antarmuka Pasar Permainan">
 
-        <!-- TOP HUD -->
+        <!-- HUD ATAS -->
         <header class="top-hud">
           <div class="hud-brand">
             <div class="hud-logo-icon" aria-hidden="true">
@@ -1331,89 +1345,89 @@
           </div>
 
           <div class="hud-stats">
-            <div class="hud-stat" title="Current coastal weather">
-              <canvas data-sprite="sun" data-scale="1.5" width="24" height="24" aria-hidden="true"></canvas>
+            <button id="btn-weather-toggle" class="hud-stat" type="button" title="Klik untuk mengganti cuaca pasar (Cerah / Hujan)">
+              <canvas id="hud-weather-icon" data-sprite="sun" data-scale="1.5" width="24" height="24" aria-hidden="true"></canvas>
               <div>
-                <span class="hud-stat-label">Weather:</span>
-                <span id="hud-weather" class="hud-stat-value">Sunny</span>
+                <span class="hud-stat-label">Cuaca:</span>
+                <span id="hud-weather" class="hud-stat-value">Cerah</span>
               </div>
-            </div>
-            <div class="hud-stat" title="Transactions remaining">
+            </button>
+            <div class="hud-stat" title="Sisa giliran transaksi">
               <canvas data-sprite="hourglass" data-scale="1.5" width="24" height="24" aria-hidden="true"></canvas>
               <div>
-                <span class="hud-stat-label">Turns:</span>
+                <span class="hud-stat-label">Giliran:</span>
                 <span id="hud-turns" class="hud-stat-value tabular">3 / 3</span>
               </div>
             </div>
-            <div class="hud-stat" title="Level mission target">
+            <div class="hud-stat" title="Target misi tahap ini">
               <canvas data-sprite="sword" data-scale="1.5" width="24" height="24" aria-hidden="true"></canvas>
               <div>
                 <span class="hud-stat-label">Target:</span>
-                <span id="hud-target" class="hud-stat-value tabular">Iron Sword (0/1)</span>
+                <span id="hud-target" class="hud-stat-value tabular">Pedang Besi (0/1)</span>
               </div>
             </div>
           </div>
 
           <div class="hud-actions">
-            <button id="btn-sound-quick" class="pixel-btn pixel-btn-wood" type="button" aria-label="Toggle Sound">
+            <button id="btn-sound-quick" class="pixel-btn pixel-btn-wood" type="button" aria-label="Ubah Suara">
               <canvas id="hud-sound-icon" data-sprite="soundOn" data-scale="1.5" width="24" height="24" aria-hidden="true"></canvas>
-              <span id="hud-sound-label">Sound On</span>
+              <span id="hud-sound-label">Suara Aktif</span>
             </button>
             <button id="btn-encyclopedia" class="pixel-btn" type="button">
               <canvas data-sprite="book" data-scale="1.5" width="24" height="24" aria-hidden="true"></canvas>
-              <span>Encyclopedia</span>
+              <span>Ensiklopedia</span>
             </button>
             <button id="btn-settings" class="pixel-btn" type="button">
               <canvas data-sprite="gear" data-scale="1.5" width="24" height="24" aria-hidden="true"></canvas>
-              <span>Settings</span>
+              <span>Pengaturan</span>
             </button>
           </div>
         </header>
 
-        <!-- MAIN WORKSPACE -->
+        <!-- AREA UTAMA -->
         <div class="main-grid">
 
-          <!-- LEFT & CENTER STAGE -->
+          <!-- PANGGUNG KIRI & TENGAH -->
           <div class="left-stage">
 
-            <!-- CENTER MARKET -->
-            <section class="market-container" aria-label="Pasar Desa Pesisir Marketplace">
+            <!-- PASAR TENGAH -->
+            <section class="market-container" aria-label="Pasar Desa Pesisir">
               <div class="market-rumor-bar" role="status" aria-live="polite">
                 <div class="rumor-left">
                   <canvas data-sprite="scroll" data-scale="1.5" width="24" height="24" aria-hidden="true"></canvas>
-                  <span class="rumor-tag">Market Rumor:</span>
-                  <span id="rumor-text" class="rumor-text">The Blacksmith needs fresh coastal fish and dry firewood before lighting the forge.</span>
+                  <span class="rumor-tag">Kabar Pasar:</span>
+                  <span id="rumor-text" class="rumor-text">Pandai Besi membutuhkan ikan segar pesisir dan kayu bakar kering sebelum menyalakan tungku.</span>
                 </div>
-                <button id="btn-next-rumor" class="rumor-next-btn" type="button">Next Rumor</button>
+                <button id="btn-next-rumor" class="rumor-next-btn" type="button">Kabar Lain</button>
               </div>
 
               <div class="market-canvas-wrap">
-                <canvas id="market-canvas" width="480" height="210" aria-label="Interactive pixel-art marketplace"></canvas>
+                <canvas id="market-canvas" width="480" height="210" aria-label="Kanvas pasar piksel interaktif"></canvas>
               </div>
 
-              <!-- Interactive Booth Panels -->
-              <div id="booth-strip" class="booth-strip" role="listbox" aria-label="Market Merchants"></div>
+              <!-- Panel Kios Pedagang Interaktif -->
+              <div id="booth-strip" class="booth-strip" role="listbox" aria-label="Pedagang Pasar"></div>
             </section>
 
-            <!-- BOTTOM LEFT & CENTER -->
+            <!-- PANEL BAWAH KIRI & TENGAH -->
             <div class="bottom-panels">
 
-              <!-- BOTTOM LEFT: INVENTORY -->
-              <section class="pixel-panel" aria-label="Player Inventory">
+              <!-- BAWAH KIRI: INVENTARIS -->
+              <section class="pixel-panel" aria-label="Inventaris Pemain">
                 <div class="panel-header">
-                  <span>INVENTORY</span>
-                  <span id="inv-total-count" class="panel-header-meta tabular">2 items</span>
+                  <span>INVENTARIS</span>
+                  <span id="inv-total-count" class="panel-header-meta tabular">2 barang</span>
                 </div>
                 <div class="panel-body">
                   <div id="inventory-grid" class="inventory-grid"></div>
                 </div>
               </section>
 
-              <!-- BOTTOM CENTER: TRADING PANEL -->
-              <section class="pixel-panel" aria-label="Merchant Trading Panel">
+              <!-- BAWAH TENGAH: PANEL BARTER -->
+              <section class="pixel-panel" aria-label="Meja Barter Pedagang">
                 <div class="panel-header">
-                  <span>BARTER COUNTER</span>
-                  <span id="trade-turn-cost" class="panel-header-meta">1 Turn per Trade</span>
+                  <span>MEJA BARTER</span>
+                  <span id="trade-efficiency-badge" class="panel-header-meta tabular">Efisiensi: 100% · 1 Giliran</span>
                 </div>
                 <div id="trade-panel-body" class="panel-body trade-panel-body"></div>
               </section>
@@ -1421,34 +1435,38 @@
             </div>
           </div>
 
-          <!-- RIGHT SIDEBAR: MISSION + COMPANION -->
-          <aside class="right-sidebar" aria-label="Mission and Companion">
+          <!-- BILAH KANAN: MISI + PEMANDU -->
+          <aside class="right-sidebar" aria-label="Misi dan Pemandu">
 
-            <!-- Level Conditions & Target -->
+            <!-- Kondisi Tahap & Target -->
             <section class="pixel-panel">
               <div class="panel-header">
-                <span>LEVEL 1</span>
+                <span>TAHAP 1</span>
                 <span class="panel-header-meta">Pasar Desa Pesisir</span>
               </div>
               <div class="panel-body">
                 <div class="mission-detail-list">
                   <div class="mission-row">
-                    <span class="mission-label">Mission</span>
-                    <span class="mission-val">Obtain 1 Iron Sword</span>
+                    <span class="mission-label">Misi</span>
+                    <span class="mission-val">Dapatkan 1 Pedang Besi</span>
                   </div>
                   <div class="mission-row">
-                    <span class="mission-label">Turn Limit</span>
-                    <span id="side-turns" class="mission-val tabular">3 Remaining</span>
+                    <span class="mission-label">Batas Giliran</span>
+                    <span id="side-turns" class="mission-val tabular">3 Tersisa</span>
                   </div>
                   <div class="mission-row">
-                    <span class="mission-label">Weather</span>
-                    <span class="mission-val">Sunny (Clear Sea)</span>
+                    <span class="mission-label">Cuaca</span>
+                    <span id="side-weather" class="mission-val">Cerah (Laut Tenang)</span>
                   </div>
                   <div class="mission-row">
-                    <span class="mission-label">Reward</span>
+                    <span class="mission-label">Efisiensi Barter</span>
+                    <span id="side-efficiency" class="mission-val tabular">100% (Optimal)</span>
+                  </div>
+                  <div class="mission-row">
+                    <span class="mission-label">Hadiah</span>
                     <span class="mission-val">
                       <canvas data-sprite="star" data-scale="1.25" width="20" height="20" aria-hidden="true"></canvas>
-                      <span>Harbor Crest</span>
+                      <span>Lencana Pelabuhan</span>
                     </span>
                   </div>
                 </div>
@@ -1458,39 +1476,39 @@
                     <canvas data-sprite="sword" data-scale="2" width="32" height="32" aria-hidden="true"></canvas>
                   </div>
                   <div>
-                    <div style="font-size: 11px; color: var(--wood-mid); font-weight: 700;">TARGET ITEM</div>
-                    <div style="font-size: 14px; font-weight: 800;">Iron Sword</div>
-                    <div id="side-target-progress" style="font-size: 12px; color: var(--ink-soft);" class="tabular">Progress: 0 / 1</div>
+                    <div style="font-size: 11px; color: var(--wood-mid); font-weight: 700;">BARANG TARGET</div>
+                    <div style="font-size: 14px; font-weight: 800;">Pedang Besi</div>
+                    <div id="side-target-progress" style="font-size: 12px; color: var(--ink-soft);" class="tabular">Progres: 0 / 1</div>
                   </div>
                 </div>
               </div>
             </section>
 
-            <!-- Companion Character & Dialogue -->
+            <!-- Karakter Pemandu & Dialog -->
             <section class="pixel-panel companion-panel">
               <div class="panel-header">
-                <span>COMPANION GUIDE</span>
+                <span>PEMANDU PASAR</span>
                 <span class="panel-header-meta">Gorontalo</span>
               </div>
               <div class="companion-body">
                 <div>
                   <div class="companion-profile">
                     <div class="companion-avatar">
-                      <canvas id="companion-canvas" width="48" height="48" aria-label="Ka'ani portrait"></canvas>
+                      <canvas id="companion-canvas" width="48" height="48" aria-label="Potret Ka'ani"></canvas>
                     </div>
                     <div>
                       <div class="companion-name">Ka'ani</div>
-                      <div class="companion-role">Harbor Barter Apprentice</div>
+                      <div class="companion-role">Pemagang Barter Pelabuhan</div>
                     </div>
                   </div>
                   <div id="companion-dialogue" class="dialogue-box" style="margin-top: 10px;" aria-live="polite">
-                    Welcome to Pasar Desa Pesisir! We brought 2 sacks of sea salt. Let's check what the Fisherman and Woodcutter offer first.
+                    Selamat datang di Pasar Desa Pesisir! Kita membawa 2 kantong garam laut. Mari periksa penawaran Nelayan dan Penebang Kayu terlebih dahulu.
                   </div>
                 </div>
 
                 <div class="companion-actions">
-                  <button id="btn-tutorial" class="pixel-btn" type="button">Tutorial</button>
-                  <button id="btn-restart-side" class="pixel-btn pixel-btn-wood" type="button">Restart</button>
+                  <button id="btn-tutorial" class="pixel-btn" type="button">Panduan</button>
+                  <button id="btn-restart-side" class="pixel-btn pixel-btn-wood" type="button">Ulangi</button>
                 </div>
               </div>
             </section>
@@ -1502,118 +1520,132 @@
     </main>
   </div>
 
-  <!-- ENCYCLOPEDIA MODAL -->
+  <!-- MODAL ENSIKLOPEDIA -->
   <div id="modal-encyclopedia" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="ency-modal-title">
     <div class="modal-box">
       <div class="modal-head">
-        <h2 id="ency-modal-title" class="modal-title">Barter Encyclopedia</h2>
-        <button class="modal-close" type="button" data-close-modal="modal-encyclopedia" aria-label="Close Encyclopedia">X</button>
+        <h2 id="ency-modal-title" class="modal-title">Ensiklopedia Barter</h2>
+        <button class="modal-close" type="button" data-close-modal="modal-encyclopedia" aria-label="Tutup Ensiklopedia">X</button>
       </div>
       <div class="modal-body">
         <p style="font-size: 13px; color: var(--ink-soft); line-height: 1.45;">
-          Coastal markets around Tomini Bay historically relied on direct exchange of sea salt, dried or fresh catch, timber, and forged iron tools.
+          Pasar pesisir di sekitar Teluk Tomini sejak dahulu mengandalkan pertukaran langsung antara garam laut, hasil tangkapan segar, kayu bakar, dan perkakas besi tempa.
         </p>
         <div id="encyclopedia-grid" class="encyclopedia-grid"></div>
         <div class="modal-footer-actions">
-          <button class="pixel-btn pixel-btn-gold" type="button" data-close-modal="modal-encyclopedia">Close</button>
+          <button class="pixel-btn pixel-btn-gold" type="button" data-close-modal="modal-encyclopedia">Tutup</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- SETTINGS MODAL -->
+  <!-- MODAL PENGATURAN -->
   <div id="modal-settings" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
     <div class="modal-box" style="max-width: 480px;">
       <div class="modal-head">
-        <h2 id="settings-modal-title" class="modal-title">Settings</h2>
-        <button class="modal-close" type="button" data-close-modal="modal-settings" aria-label="Close Settings">X</button>
+        <h2 id="settings-modal-title" class="modal-title">Pengaturan</h2>
+        <button class="modal-close" type="button" data-close-modal="modal-settings" aria-label="Tutup Pengaturan">X</button>
       </div>
       <div class="modal-body">
         <div class="settings-row">
           <div>
-            <div class="settings-label-title">Sound Effects</div>
-            <div class="settings-label-sub">16-bit Web Audio chimes and trade feedback</div>
+            <div class="settings-label-title">Efek Suara</div>
+            <div class="settings-label-sub">Dentingan Web Audio 16-bit dan umpan balik barter</div>
           </div>
-          <button id="btn-toggle-sound" class="pixel-btn pixel-btn-green" type="button">On</button>
+          <button id="btn-toggle-sound" class="pixel-btn pixel-btn-green" type="button">Aktif</button>
         </div>
         <div class="settings-row">
           <div>
-            <div class="settings-label-title">Tutorial Guide</div>
-            <div class="settings-label-sub">View step-by-step barter instructions</div>
+            <div class="settings-label-title">Suara Latar Pesisir</div>
+            <div class="settings-label-sub">Deburan ombak Teluk Tomini dan keramaian pasar</div>
           </div>
-          <button id="btn-open-tutorial-from-settings" class="pixel-btn" type="button">Open Guide</button>
+          <button id="btn-toggle-ambience" class="pixel-btn pixel-btn-green" type="button">Aktif</button>
         </div>
         <div class="settings-row">
           <div>
-            <div class="settings-label-title">Restart Current Level</div>
-            <div class="settings-label-sub">Reset turns to 3 and Salt to x2</div>
+            <div class="settings-label-title">Cuaca Pasar</div>
+            <div class="settings-label-sub">Ubah antara Cerah (100%) dan Hujan (efisiensi 75%)</div>
           </div>
-          <button id="btn-restart-from-settings" class="pixel-btn pixel-btn-wood" type="button">Restart</button>
+          <button id="btn-toggle-weather-settings" class="pixel-btn" type="button">Cerah</button>
         </div>
         <div class="settings-row">
           <div>
-            <div class="settings-label-title">Clear Saved Progress</div>
-            <div class="settings-label-sub">Erase LocalStorage scores and saved run</div>
+            <div class="settings-label-title">Panduan Bermain</div>
+            <div class="settings-label-sub">Lihat langkah-langkah cara melakukan barter</div>
           </div>
-          <button id="btn-clear-save" class="pixel-btn" type="button">Clear Save</button>
+          <button id="btn-open-tutorial-from-settings" class="pixel-btn" type="button">Buka Panduan</button>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label-title">Ulangi Tahap Ini</div>
+            <div class="settings-label-sub">Atur ulang giliran ke 3 dan Garam menjadi x2</div>
+          </div>
+          <button id="btn-restart-from-settings" class="pixel-btn pixel-btn-wood" type="button">Ulangi</button>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label-title">Hapus Progres Tersimpan</div>
+            <div class="settings-label-sub">Hapus skor dan catatan permainan di LocalStorage</div>
+          </div>
+          <button id="btn-clear-save" class="pixel-btn" type="button">Hapus Data</button>
         </div>
         <div class="modal-footer-actions">
-          <button id="btn-back-title" class="pixel-btn" type="button">Title Screen</button>
-          <button class="pixel-btn pixel-btn-gold" type="button" data-close-modal="modal-settings">Resume</button>
+          <button id="btn-back-title" class="pixel-btn" type="button">Layar Judul</button>
+          <button class="pixel-btn pixel-btn-gold" type="button" data-close-modal="modal-settings">Lanjutkan</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- TUTORIAL MODAL -->
+  <!-- MODAL PANDUAN -->
   <div id="modal-tutorial" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="tutorial-modal-title">
     <div class="modal-box" style="max-width: 540px;">
       <div class="modal-head">
-        <h2 id="tutorial-modal-title" class="modal-title">How to Barter</h2>
-        <button class="modal-close" type="button" data-close-modal="modal-tutorial" aria-label="Close Tutorial">X</button>
+        <h2 id="tutorial-modal-title" class="modal-title">Cara Bermain Barter</h2>
+        <button class="modal-close" type="button" data-close-modal="modal-tutorial" aria-label="Tutup Panduan">X</button>
       </div>
       <div class="modal-body">
         <div class="tutorial-steps">
           <div class="tutorial-step">
             <div class="tutorial-num">1</div>
             <div>
-              <strong>Inspect the Three Merchants</strong>
+              <strong>Periksa Ketiga Pedagang</strong>
               <p style="font-size: 13px; color: var(--ink-soft); margin-top: 3px;">
-                Click any booth in the harbor marketplace (Fisherman, Woodcutter, or Blacksmith) to see what items they request and offer.
+                Klik salah satu kios di pasar pelabuhan (Nelayan, Penebang Kayu, atau Pandai Besi) untuk melihat barang yang diminta dan ditawarkan.
               </p>
             </div>
           </div>
           <div class="tutorial-step">
             <div class="tutorial-num">2</div>
             <div>
-              <strong>Plan Your 3 Turns</strong>
+              <strong>Rencanakan 3 Giliran &amp; Cuaca</strong>
               <p style="font-size: 13px; color: var(--ink-soft); margin-top: 3px;">
-                You begin with <strong>Salt x2</strong> and <strong>3 turns</strong>. Every trade uses 1 turn and reduces that merchant's stock.
+                Kamu memulai dengan <strong>Garam x2</strong> dan <strong>3 giliran</strong>. Setiap transaksi memakai 1 giliran. Saat cuaca <strong>Hujan</strong>, efisiensi skor barter turun menjadi 75%.
               </p>
             </div>
           </div>
           <div class="tutorial-step">
             <div class="tutorial-num">3</div>
             <div>
-              <strong>Chain Trades to the Iron Sword</strong>
+              <strong>Rangkai Barter Menuju Pedang Besi</strong>
               <p style="font-size: 13px; color: var(--ink-soft); margin-top: 3px;">
-                Trade goods step-by-step until you hold both materials required by the Blacksmith, then forge the <strong>Iron Sword</strong>!
+                Tukarkan barang secara bertahap hingga kamu memiliki kedua bahan yang diminta Pandai Besi, lalu tempa <strong>Pedang Besi</strong>!
               </p>
             </div>
           </div>
         </div>
         <div class="modal-footer-actions">
-          <button class="pixel-btn pixel-btn-gold" type="button" data-close-modal="modal-tutorial">Got It</button>
+          <button class="pixel-btn pixel-btn-gold" type="button" data-close-modal="modal-tutorial">Mengerti</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- VICTORY MODAL -->
+  <!-- MODAL KEMENANGAN -->
   <div id="modal-victory" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="victory-modal-title">
     <div class="modal-box" style="max-width: 500px;">
       <div class="modal-head">
-        <h2 id="victory-modal-title" class="modal-title">Mission Completed!</h2>
+        <h2 id="victory-modal-title" class="modal-title">Misi Selesai!</h2>
       </div>
       <div class="modal-body">
         <div class="outcome-banner">
@@ -1621,42 +1653,42 @@
             <canvas data-sprite="sword" data-scale="3.5" width="56" height="56" aria-hidden="true"></canvas>
           </div>
           <div style="font-family: var(--font-display); font-size: 19px; font-weight: 900; color: var(--emerald-ink);">
-            Iron Sword Obtained!
+            Pedang Besi Diperoleh!
           </div>
-          <p style="font-size: 13px; color: var(--ink-soft); max-width: 380px; line-height: 1.45;">
-            Through keen coastal barter across Pasar Desa Pesisir, you gathered fresh catch and timber to forge the Blacksmith's finest blade.
+          <p id="victory-summary-desc" style="font-size: 13px; color: var(--ink-soft); max-width: 380px; line-height: 1.45;">
+            Berkat strategi barter yang cermat di Pasar Desa Pesisir, kamu berhasil mengumpulkan hasil tangkapan dan kayu bakar untuk menempa bilah terbaik Pandai Besi.
           </p>
-          <div id="victory-stars" class="outcome-stars" aria-label="3 Stars Earned"></div>
+          <div id="victory-stars" class="outcome-stars" aria-label="3 Bintang Diraih"></div>
         </div>
 
         <div class="outcome-stats">
           <div class="outcome-stat-box">
             <div id="victory-score" class="outcome-stat-num tabular">1200</div>
-            <div class="outcome-stat-lbl">Score</div>
+            <div class="outcome-stat-lbl">Skor</div>
           </div>
           <div class="outcome-stat-box">
             <div id="victory-turns-used" class="outcome-stat-num tabular">3 / 3</div>
-            <div class="outcome-stat-lbl">Turns Used</div>
+            <div class="outcome-stat-lbl">Giliran Terpakai</div>
           </div>
           <div class="outcome-stat-box">
             <div id="victory-best-score" class="outcome-stat-num tabular">1200</div>
-            <div class="outcome-stat-lbl">Best Score</div>
+            <div class="outcome-stat-lbl">Skor Terbaik</div>
           </div>
         </div>
 
         <div class="modal-footer-actions" style="justify-content: center;">
-          <button id="btn-victory-play-again" class="pixel-btn" type="button">Play Again</button>
-          <button id="btn-victory-continue" class="pixel-btn pixel-btn-gold" type="button">Continue</button>
+          <button id="btn-victory-play-again" class="pixel-btn" type="button">Main Lagi</button>
+          <button id="btn-victory-continue" class="pixel-btn pixel-btn-gold" type="button">Lanjut</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- FAILURE MODAL -->
+  <!-- MODAL KEGAGALAN -->
   <div id="modal-failure" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="failure-modal-title">
     <div class="modal-box" style="max-width: 480px;">
       <div class="modal-head" style="background-color: #6b221c;">
-        <h2 id="failure-modal-title" class="modal-title" style="color: #ffe7c2;">Market Closed</h2>
+        <h2 id="failure-modal-title" class="modal-title" style="color: #ffe7c2;">Pasar Ditutup</h2>
       </div>
       <div class="modal-body">
         <div class="outcome-banner">
@@ -1664,14 +1696,14 @@
             <canvas data-sprite="hourglass" data-scale="3" width="48" height="48" aria-hidden="true"></canvas>
           </div>
           <div style="font-family: var(--font-display); font-size: 18px; font-weight: 900; color: var(--crimson);">
-            Mission Incomplete
+            Misi Belum Selesai
           </div>
           <p id="failure-reason" style="font-size: 13px; color: var(--ink-soft); line-height: 1.45;">
-            Evening tide arrived before you could obtain the Iron Sword. Plan your barter sequence and try again!
+            Pasang sore telah tiba sebelum kamu memperoleh Pedang Besi. Rencanakan urutan bartermu dan coba lagi!
           </p>
         </div>
         <div class="modal-footer-actions" style="justify-content: center;">
-          <button id="btn-failure-retry" class="pixel-btn pixel-btn-gold" type="button">Try Again</button>
+          <button id="btn-failure-retry" class="pixel-btn pixel-btn-gold" type="button">Coba Lagi</button>
         </div>
       </div>
     </div>
@@ -1687,43 +1719,60 @@
       var ITEMS = {
         salt: {
           id: "salt",
-          name: "Salt",
+          name: "Garam",
           localName: "Garam Pesisir",
-          origin: "Tomini Salt Pans",
-          role: "Base Barter Commodity",
-          description: "Sun-dried coastal sea salt packed in woven leaf pouches. Prized across Gorontalo villages for preserving fish and seasoning daily meals."
+          origin: "Tambak Garam Tomini",
+          role: "Komoditas Barter Dasar",
+          description: "Garam laut yang dijemur di bawah terik matahari pesisir dan dikemas dalam anyaman daun. Sangat bernilai di desa-desa Gorontalo untuk mengawetkan ikan dan membumbui masakan."
         },
         fish: {
           id: "fish",
-          name: "Fresh Fish",
-          localName: "Ikan Segar",
-          origin: "Tomini Bay Pier",
-          role: "Intermediate Provision",
-          description: "Silver coastal catch hauled ashore at dawn by traditional outrigger perahu boats. Essential nourishment for hardworking village craftspeople."
+          name: "Ikan Segar",
+          localName: "Ikan Segar Teluk Tomini",
+          origin: "Dermaga Teluk Tomini",
+          role: "Bahan Pangan Barter",
+          description: "Ikan pesisir perak yang baru mendarat saat fajar menggunakan perahu katir tradisional. Menjadi sumber pangan utama bagi para perajin desa."
         },
         firewood: {
           id: "firewood",
-          name: "Firewood",
-          localName: "Kayu Bakar",
-          origin: "Coastal Ridge",
-          role: "Forge Fuel",
-          description: "Seasoned hardwood bundles split cleanly by the ridge woodcutter. Burns hot and steady to keep the blacksmith's charcoal furnace glowing."
+          name: "Kayu Bakar",
+          localName: "Kayu Bakar Kering",
+          origin: "Perbukitan Pesisir",
+          role: "Bahan Bakar Tungku",
+          description: "Ikatan kayu keras yang dibelah rapi oleh penebang bukit. Membakar panas dan stabil untuk menjaga bara tungku pandai besi tetap menyala."
         },
         sword: {
           id: "sword",
-          name: "Iron Sword",
-          localName: "Pedang Besi",
-          origin: "Village Smithy",
-          role: "Mission Target",
-          description: "A finely tempered blade hammered over glowing embers and quenched in coastal water. Ready for guards and sea-route expeditions."
+          name: "Pedang Besi",
+          localName: "Pedang Besi Tempa",
+          origin: "Bengkel Pandai Besi Desa",
+          role: "Target Misi",
+          description: "Bilah pedang yang ditempa di atas bara api dan disepuh dengan air pesisir. Siap digunakan untuk pengawalan kapal dagang."
+        }
+      };
+
+      var WEATHER_TYPES = {
+        sunny: {
+          id: "sunny",
+          label: "Cerah",
+          detail: "Cerah (Laut Tenang)",
+          efficiency: 1.0,
+          efficiencyText: "100% (Optimal)"
+        },
+        rainy: {
+          id: "rainy",
+          label: "Hujan",
+          detail: "Hujan (Efisiensi 75%)",
+          efficiency: 0.75,
+          efficiencyText: "75% (Dermaga Basah)"
         }
       };
 
       var RUMORS = [
-        "The Blacksmith will only light the forge once he has both Fresh Fish and dry Firewood.",
-        "Sea Salt from the morning tide is sought after by both the Fisherman and the Woodcutter.",
-        "Each merchant booth carries only 1 unit of stock during Pasar Desa Pesisir.",
-        "Plan all 3 turns carefully: two trades gather supplies, the third forges the Iron Sword!"
+        "Pandai Besi hanya akan menyalakan tungkunya jika sudah mendapat Ikan Segar dan Kayu Bakar kering.",
+        "Garam laut dari pasang pagi sangat dicari oleh Nelayan maupun Penebang Kayu.",
+        "Setiap kios pedagang hanya menyimpan 1 unit stok selama berlangsungnya Pasar Desa Pesisir.",
+        "Saat cuaca Hujan, efisiensi skor barter turun menjadi 75%, tetapi seluruh transaksi tetap bisa diselesaikan dalam 3 giliran!"
       ];
 
       /* 16x16 Pixel Sprite Matrices */
@@ -1838,6 +1887,24 @@
           "...Y..KKKK..Y...",
           "..Y....YY....Y..",
           ".......YY.......",
+          "................",
+          "................"
+        ],
+        rain: [
+          "................",
+          ".....KKKKKK.....",
+          "...KKHHHHHHKK...",
+          "..KHHHHHHHHHHK..",
+          ".KHHIIIIIIIIHHK.",
+          ".KMMMMMMMMMMMMK.",
+          "..KKKKKKKKKKKK..",
+          "................",
+          "...CC..CC..CC...",
+          "..CC..CC..CC....",
+          "................",
+          "....CC..CC..CC..",
+          "...CC..CC..CC...",
+          "................",
           "................",
           "................"
         ],
@@ -2098,6 +2165,16 @@
       var AudioFX = (function () {
         var ctx = null;
         var enabled = true;
+        var ambienceEnabled = true;
+        var ambienceStarted = false;
+        var currentScreen = "title";
+        var currentWeather = "sunny";
+
+        var masterGain = null;
+        var ambienceBus = null;
+        var waveGainNode = null;
+        var rainGainNode = null;
+        var chatterTimer = null;
 
         function ensureCtx() {
           if (!enabled) return null;
@@ -2107,10 +2184,201 @@
               ctx = new AudioContext();
             }
           }
-          if (ctx && ctx.state === "suspended") {
+          if (!ctx) return null;
+          if (!masterGain && typeof ctx.createGain === "function") {
+            masterGain = ctx.createGain();
+            masterGain.gain.setValueAtTime(enabled ? 1 : 0, ctx.currentTime);
+            masterGain.connect(ctx.destination);
+          }
+          if (ctx.state === "suspended" && typeof ctx.resume === "function") {
             ctx.resume().catch(function () {});
           }
           return ctx;
+        }
+
+        function createLoopNoiseBuffer(ac, seconds, smoothFactor) {
+          var sampleRate = ac.sampleRate || 44100;
+          var length = Math.floor(sampleRate * seconds);
+          var buffer = ac.createBuffer(1, length, sampleRate);
+          var data = buffer.getChannelData(0);
+          var lastOut = 0;
+          for (var i = 0; i < length; i++) {
+            var white = Math.random() * 2 - 1;
+            lastOut = (lastOut + smoothFactor * white) / (1 + smoothFactor);
+            data[i] = lastOut * 2.4;
+          }
+          // Crossfade edges so buffer loops seamlessly without clicks
+          var fadeLen = Math.min(2048, Math.floor(length * 0.08));
+          for (var f = 0; f < fadeLen; f++) {
+            var t = f / fadeLen;
+            var tailIdx = length - fadeLen + f;
+            data[f] = data[f] * t + data[tailIdx] * (1 - t);
+          }
+          return buffer;
+        }
+
+        function syncAmbienceLevels() {
+          if (!ctx || !ambienceBus || !waveGainNode || !rainGainNode) return;
+          var now = ctx.currentTime;
+          var active = enabled && ambienceEnabled && !document.hidden;
+          ambienceBus.gain.setTargetAtTime(active ? 1.0 : 0.0001, now, 0.15);
+          waveGainNode.gain.setTargetAtTime(currentWeather === "rainy" ? 0.045 : 0.036, now, 0.35);
+          rainGainNode.gain.setTargetAtTime(currentWeather === "rainy" ? 0.028 : 0.0001, now, 0.35);
+        }
+
+        function scheduleMarketplaceChatter() {
+          if (chatterTimer) {
+            window.clearTimeout(chatterTimer);
+          }
+          var nextDelay = 650 + Math.floor(Math.random() * 1150);
+          chatterTimer = window.setTimeout(function () {
+            if (enabled && ambienceEnabled && currentScreen === "playing" && !document.hidden) {
+              playChatterBurst();
+            }
+            scheduleMarketplaceChatter();
+          }, nextDelay);
+        }
+
+        function playChatterBurst() {
+          var ac = ensureCtx();
+          if (!ac || !ambienceBus || typeof ac.createBiquadFilter !== "function") return;
+          var now = ac.currentTime;
+          var roll = Math.random();
+
+          // Optional stereo pan across the 3 market stalls
+          var dest = ambienceBus;
+          if (typeof ac.createStereoPanner === "function") {
+            var panner = ac.createStereoPanner();
+            panner.pan.setValueAtTime((Math.random() * 1.4) - 0.7, now);
+            panner.connect(ambienceBus);
+            dest = panner;
+          }
+
+          if (roll < 0.72) {
+            // 16-bit village market chatter: 2 to 4 soft speech-like syllables
+            var syllables = 2 + Math.floor(Math.random() * 3);
+            var basePitch = 185 + Math.random() * 170;
+            for (var i = 0; i < syllables; i++) {
+              var t0 = now + i * (0.065 + Math.random() * 0.035);
+              var dur = 0.045 + Math.random() * 0.035;
+              var osc = ac.createOscillator();
+              var filter = ac.createBiquadFilter();
+              var g = ac.createGain();
+
+              osc.type = Math.random() > 0.4 ? "triangle" : "square";
+              var pitch = basePitch * (0.9 + Math.random() * 0.25);
+              osc.frequency.setValueAtTime(pitch, t0);
+              osc.frequency.linearRampToValueAtTime(pitch * (0.92 + Math.random() * 0.16), t0 + dur);
+
+              filter.type = "bandpass";
+              filter.frequency.setValueAtTime(650 + Math.random() * 450, t0);
+              filter.Q.setValueAtTime(2.2, t0);
+
+              g.gain.setValueAtTime(0.0001, t0);
+              g.gain.linearRampToValueAtTime(0.011, t0 + 0.01);
+              g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+
+              osc.connect(filter);
+              filter.connect(g);
+              g.connect(dest);
+              osc.start(t0);
+              osc.stop(t0 + dur + 0.015);
+            }
+          } else if (roll < 0.9) {
+            // Distant blacksmith anvil clink or wooden stall knock
+            var clink = ac.createOscillator();
+            var cg = ac.createGain();
+            clink.type = "triangle";
+            var cFreq = Math.random() > 0.5 ? 1120 : 420;
+            clink.frequency.setValueAtTime(cFreq, now);
+            clink.frequency.exponentialRampToValueAtTime(cFreq * 0.85, now + 0.09);
+            cg.gain.setValueAtTime(0.009, now);
+            cg.gain.exponentialRampToValueAtTime(0.0001, now + 0.11);
+            clink.connect(cg);
+            cg.connect(dest);
+            clink.start(now);
+            clink.stop(now + 0.12);
+          } else if (currentWeather !== "rainy") {
+            // Distant Tomini Bay coastal seabird chirp
+            var gull = ac.createOscillator();
+            var gg = ac.createGain();
+            gull.type = "sine";
+            gull.frequency.setValueAtTime(1480, now);
+            gull.frequency.exponentialRampToValueAtTime(1920, now + 0.08);
+            gull.frequency.exponentialRampToValueAtTime(1320, now + 0.18);
+            gg.gain.setValueAtTime(0.0001, now);
+            gg.gain.linearRampToValueAtTime(0.008, now + 0.03);
+            gg.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
+            gull.connect(gg);
+            gg.connect(dest);
+            gull.start(now);
+            gull.stop(now + 0.22);
+          }
+        }
+
+        function startAmbience() {
+          var ac = ensureCtx();
+          if (!ac || typeof ac.createBuffer !== "function") return;
+          if (ambienceStarted) {
+            syncAmbienceLevels();
+            return;
+          }
+          ambienceStarted = true;
+
+          ambienceBus = ac.createGain();
+          ambienceBus.gain.setValueAtTime(enabled && ambienceEnabled ? 1.0 : 0.0001, ac.currentTime);
+          ambienceBus.connect(masterGain);
+
+          // 1. Looping Coastal Waves (Filtered Noise + Slow Swell LFO)
+          var waveBuffer = createLoopNoiseBuffer(ac, 4.0, 0.06);
+          var waveSource = ac.createBufferSource();
+          waveSource.buffer = waveBuffer;
+          waveSource.loop = true;
+
+          var waveFilter = ac.createBiquadFilter();
+          waveFilter.type = "lowpass";
+          waveFilter.frequency.setValueAtTime(420, ac.currentTime);
+          waveFilter.Q.setValueAtTime(0.7, ac.currentTime);
+
+          waveGainNode = ac.createGain();
+          waveGainNode.gain.setValueAtTime(0.036, ac.currentTime);
+
+          var swellLfo = ac.createOscillator();
+          swellLfo.type = "sine";
+          swellLfo.frequency.setValueAtTime(0.14, ac.currentTime); // ~7s wave cycle
+          var lfoFilterDepth = ac.createGain();
+          lfoFilterDepth.gain.setValueAtTime(240, ac.currentTime);
+          swellLfo.connect(lfoFilterDepth);
+          lfoFilterDepth.connect(waveFilter.frequency);
+
+          waveSource.connect(waveFilter);
+          waveFilter.connect(waveGainNode);
+          waveGainNode.connect(ambienceBus);
+          waveSource.start(0);
+          swellLfo.start(0);
+
+          // 2. Gentle Rain Layer (activated during Rainy weather)
+          var rainBuffer = createLoopNoiseBuffer(ac, 3.0, 0.45);
+          var rainSource = ac.createBufferSource();
+          rainSource.buffer = rainBuffer;
+          rainSource.loop = true;
+
+          var rainFilter = ac.createBiquadFilter();
+          rainFilter.type = "bandpass";
+          rainFilter.frequency.setValueAtTime(1750, ac.currentTime);
+          rainFilter.Q.setValueAtTime(0.8, ac.currentTime);
+
+          rainGainNode = ac.createGain();
+          rainGainNode.gain.setValueAtTime(0.0001, ac.currentTime);
+
+          rainSource.connect(rainFilter);
+          rainFilter.connect(rainGainNode);
+          rainGainNode.connect(ambienceBus);
+          rainSource.start(0);
+
+          // 3. Marketplace Chatter Loop
+          scheduleMarketplaceChatter();
+          syncAmbienceLevels();
         }
 
         function tone(freq, duration, type, delay, vol) {
@@ -2124,17 +2392,49 @@
           gain.gain.setValueAtTime(vol || 0.06, start);
           gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
           osc.connect(gain);
-          gain.connect(ac.destination);
+          gain.connect(masterGain || ac.destination);
           osc.start(start);
           osc.stop(start + duration + 0.02);
+        }
+
+        if (typeof document !== "undefined" && typeof document.addEventListener === "function") {
+          document.addEventListener("visibilitychange", function () {
+            syncAmbienceLevels();
+          });
         }
 
         return {
           setEnabled: function (val) {
             enabled = !!val;
+            if (ctx && masterGain) {
+              masterGain.gain.setTargetAtTime(enabled ? 1.0 : 0.0001, ctx.currentTime, 0.05);
+            }
+            if (enabled && !ambienceStarted && currentScreen === "playing") {
+              startAmbience();
+            }
+            syncAmbienceLevels();
           },
           isEnabled: function () {
             return enabled;
+          },
+          setAmbienceEnabled: function (val) {
+            ambienceEnabled = !!val;
+            if (ambienceEnabled && enabled && !ambienceStarted && currentScreen === "playing") {
+              startAmbience();
+            }
+            syncAmbienceLevels();
+          },
+          isAmbienceEnabled: function () {
+            return ambienceEnabled;
+          },
+          updateContext: function (screen, weather, fromUserGesture) {
+            if (screen) currentScreen = screen;
+            if (weather) currentWeather = weather;
+            if (fromUserGesture && enabled && ambienceEnabled) {
+              startAmbience();
+            } else {
+              syncAmbienceLevels();
+            }
           },
           playSelect: function () {
             tone(523.25, 0.07, "triangle", 0, 0.06);
@@ -2171,6 +2471,7 @@
         function defaultData() {
           return {
             soundEnabled: true,
+            ambienceEnabled: true,
             tutorialSeen: false,
             bestScore: 0,
             bestStars: 0,
@@ -2226,7 +2527,7 @@
         var LEVEL_1 = {
           id: 1,
           title: "Pasar Desa Pesisir",
-          weather: "Sunny",
+          weather: "sunny",
           maxTurns: 3,
           targetItem: "sword",
           targetQty: 1,
@@ -2239,7 +2540,7 @@
           merchants: [
             {
               id: "fisherman",
-              name: "Fisherman",
+              name: "Nelayan",
               role: "Nelayan Teluk Tomini",
               sprite: "fisherman",
               boothX: 30,
@@ -2249,11 +2550,11 @@
               requires: [{ item: "salt", qty: 1 }],
               gives: [{ item: "fish", qty: 1 }],
               maxStock: 1,
-              greeting: "Morning tide brought silver fish! Swap 1 pouch of sea salt and this fresh catch is yours."
+              greeting: "Pasang pagi membawa ikan perak! Tukar 1 kantong garam laut dan tangkapan segar ini menjadi milikmu."
             },
             {
               id: "woodcutter",
-              name: "Woodcutter",
+              name: "Penebang Kayu",
               role: "Penebang Kayu Pesisir",
               sprite: "woodcutter",
               boothX: 181,
@@ -2263,11 +2564,11 @@
               requires: [{ item: "salt", qty: 1 }],
               gives: [{ item: "firewood", qty: 1 }],
               maxStock: 1,
-              greeting: "I split dry coastal hardwood at sunrise. Give me 1 Salt for preservation and take this firewood!"
+              greeting: "Aku membelah kayu keras kering saat matahari terbit. Beri aku 1 Garam untuk pengawet dan bawa kayu bakar ini!"
             },
             {
               id: "blacksmith",
-              name: "Blacksmith",
+              name: "Pandai Besi",
               role: "Pandai Besi Desa",
               sprite: "blacksmith",
               boothX: 332,
@@ -2280,7 +2581,7 @@
               ],
               gives: [{ item: "sword", qty: 1 }],
               maxStock: 1,
-              greeting: "My anvil is ready, traveler! Bring 1 Fresh Fish for supper and 1 Firewood for the bellows—then I will forge your Iron Sword."
+              greeting: "Paronku sudah siap, pengelana! Bawakan 1 Ikan Segar dan 1 Kayu Bakar untuk tungku—lalu akan kutempa Pedang Besi untukmu."
             }
           ]
         };
@@ -2362,16 +2663,16 @@
         return {
           canTrade: function (merchant, turnsRemaining) {
             if (!merchant) {
-              return { valid: false, reason: "Select a merchant booth in the market." };
+              return { valid: false, reason: "Pilih kios pedagang di pasar terlebih dahulu." };
             }
             if (isLocked) {
-              return { valid: false, reason: "Completing barter..." };
+              return { valid: false, reason: "Sedang memproses barter..." };
             }
             if (turnsRemaining <= 0) {
-              return { valid: false, reason: "No turns remaining." };
+              return { valid: false, reason: "Giliran sudah habis." };
             }
             if (merchant.stock <= 0) {
-              return { valid: false, reason: merchant.name + " is out of stock." };
+              return { valid: false, reason: "Stok " + merchant.name + " sudah habis." };
             }
             if (!InventoryManager.hasAll(merchant.requires)) {
               var missing = [];
@@ -2382,9 +2683,9 @@
                   missing.push((r.qty - have) + " " + ITEMS[r.item].name);
                 }
               }
-              return { valid: false, reason: "Missing: " + missing.join(" + ") + "." };
+              return { valid: false, reason: "Kurang: " + missing.join(" + ") + "." };
             }
-            return { valid: true, reason: "Ready to barter with " + merchant.name + "." };
+            return { valid: true, reason: "Siap bertransaksi dengan " + merchant.name + "." };
           },
           hasAnyValidTrade: function (merchants, turnsRemaining) {
             if (turnsRemaining <= 0) return false;
@@ -2405,7 +2706,7 @@
             var applied = InventoryManager.applyExchange(merchant.requires, merchant.gives);
             if (!applied) {
               isLocked = false;
-              return { ok: false, message: "Invalid inventory state prevented." };
+              return { ok: false, message: "Transaksi tidak valid dicegah." };
             }
             merchant.stock = Math.max(0, merchant.stock - 1);
             if (typeof onSuccess === "function") {
@@ -2417,7 +2718,7 @@
                 onUnlock();
               }
             }, 340);
-            return { ok: true, message: "Trade complete!" };
+            return { ok: true, message: "Barter berhasil!" };
           },
           resetLock: function () {
             isLocked = false;
@@ -2437,6 +2738,10 @@
         var lastTs = 0;
         var particles = [];
         var embers = [];
+        var raindrops = [];
+        var splashes = [];
+        var seagulls = [];
+        var seagullSpawnTimer = 1.2;
 
         for (var e = 0; e < 14; e++) {
           embers.push({
@@ -2444,6 +2749,15 @@
             y: 118 - (e * 3) % 24,
             speed: 8 + (e % 4) * 4,
             phase: e * 0.7
+          });
+        }
+
+        for (var r = 0; r < 85; r++) {
+          raindrops.push({
+            x: (r * 37) % 480,
+            y: (r * 23) % 210,
+            speed: 135 + (r % 5) * 20,
+            len: 5 + (r % 3) * 2
           });
         }
 
@@ -2545,44 +2859,53 @@
           ctx.fillRect(x + Math.floor(w / 2) - 2, y - 16, 4, 3);
         }
 
-        function drawBackdropScene(ctx, width, height, t) {
-          // 1. Sky
-          ctx.fillStyle = "#88cfe0";
+        function drawBackdropScene(ctx, width, height, t, isRainy) {
+          // 1. Sky (Cerah vs Mendung Hujan)
+          ctx.fillStyle = isRainy ? "#4e7185" : "#88cfe0";
           ctx.fillRect(0, 0, width, 46);
-          ctx.fillStyle = "#a8dfec";
+          ctx.fillStyle = isRainy ? "#65889c" : "#a8dfec";
           ctx.fillRect(0, 46, width, 24);
 
-          // Sun
-          ctx.fillStyle = "#f4d263";
-          ctx.fillRect(416, 12, 18, 18);
-          ctx.fillStyle = "#fff6dc";
-          ctx.fillRect(420, 16, 10, 10);
+          if (!isRainy) {
+            // Sun
+            ctx.fillStyle = "#f4d263";
+            ctx.fillRect(416, 12, 18, 18);
+            ctx.fillStyle = "#fff6dc";
+            ctx.fillRect(420, 16, 10, 10);
+          }
 
           // Drifting pixel clouds
-          var c1 = Math.floor((t * 6) % (width + 60)) - 50;
-          var c2 = Math.floor((t * 4 + 220) % (width + 60)) - 50;
-          ctx.fillStyle = "#fff9eb";
-          ctx.fillRect(c1, 16, 32, 8);
-          ctx.fillRect(c1 + 6, 12, 18, 6);
-          ctx.fillRect(c2, 26, 26, 7);
-          ctx.fillRect(c2 + 5, 22, 14, 5);
+          var cloudSpeed = isRainy ? 10 : 6;
+          var c1 = Math.floor((t * cloudSpeed) % (width + 60)) - 50;
+          var c2 = Math.floor((t * (cloudSpeed * 0.7) + 220) % (width + 60)) - 50;
+          ctx.fillStyle = isRainy ? "#8fa2ad" : "#fff9eb";
+          ctx.fillRect(c1, 14, 38, 10);
+          ctx.fillRect(c1 + 6, 10, 24, 6);
+          ctx.fillRect(c2, 24, 32, 8);
+          ctx.fillRect(c2 + 5, 20, 18, 5);
+          if (isRainy) {
+            var c3 = Math.floor((t * 8 + 110) % (width + 60)) - 50;
+            ctx.fillStyle = "#7a8f9b";
+            ctx.fillRect(c3, 18, 42, 9);
+            ctx.fillRect(c3 + 8, 13, 24, 6);
+          }
 
           // Distant Gorontalo emerald hills
-          ctx.fillStyle = "#3f7a52";
+          ctx.fillStyle = isRainy ? "#2f5b44" : "#3f7a52";
           for (var hx = 0; hx < width; hx += 4) {
             var hh = 14 + Math.floor(Math.sin(hx * 0.025) * 6 + Math.cos(hx * 0.05) * 4);
             ctx.fillRect(hx, 64 - hh, 4, hh);
           }
 
           // 2. Tomini Bay Ocean
-          ctx.fillStyle = "#1d5e7d";
+          ctx.fillStyle = isRainy ? "#18465e" : "#1d5e7d";
           ctx.fillRect(0, 64, width, 28);
-          ctx.fillStyle = "#2b7fa1";
+          ctx.fillStyle = isRainy ? "#245d78" : "#2b7fa1";
           ctx.fillRect(0, 74, width, 18);
 
-          // Sparkling waves
-          var waveShift = Math.floor(t * 10);
-          ctx.fillStyle = "#8ad4df";
+          // Sparkling / Choppy waves
+          var waveShift = Math.floor(t * (isRainy ? 16 : 10));
+          ctx.fillStyle = isRainy ? "#6ca4b5" : "#8ad4df";
           for (var wx = 0; wx < width; wx += 24) {
             var px = (wx + waveShift) % width;
             ctx.fillRect(px, 68, 8, 2);
@@ -2590,8 +2913,9 @@
           }
 
           // Fishing Perahu boats
-          drawPerahuBoat(ctx, 56, 62, Math.sin(t * 2.1) * 1.5);
-          drawPerahuBoat(ctx, 310, 60, Math.cos(t * 1.8) * 1.5);
+          var boatAmp = isRainy ? 2.4 : 1.5;
+          drawPerahuBoat(ctx, 56, 62, Math.sin(t * 2.4) * boatAmp);
+          drawPerahuBoat(ctx, 310, 60, Math.cos(t * 2.1) * boatAmp);
 
           // Wooden Harbor Pier on Left
           ctx.fillStyle = "#4a2c18";
@@ -2604,18 +2928,26 @@
           }
 
           // 3. Sandy Shoreline & Market Plaza
-          ctx.fillStyle = "#d9c290";
+          ctx.fillStyle = isRainy ? "#b8a378" : "#d9c290";
           ctx.fillRect(0, 92, width, 14);
-          ctx.fillStyle = "#efe0b9";
+          ctx.fillStyle = isRainy ? "#cfb98e" : "#efe0b9";
           ctx.fillRect(0, 102, width, height - 102);
 
           // Cobblestone / Warm Earth Path
-          ctx.fillStyle = "#c9ae78";
+          ctx.fillStyle = isRainy ? "#a38d62" : "#c9ae78";
           ctx.fillRect(0, 166, width, 34);
-          ctx.fillStyle = "#b5965d";
+          ctx.fillStyle = isRainy ? "#8c754d" : "#b5965d";
           for (var sx = 12; sx < width; sx += 26) {
             ctx.fillRect(sx, 172, 14, 6);
             ctx.fillRect(sx + 10, 184, 12, 6);
+          }
+
+          // Rain puddles when Rainy
+          if (isRainy) {
+            ctx.fillStyle = "#5c99ad";
+            ctx.fillRect(142, 178, 16, 4);
+            ctx.fillRect(298, 184, 18, 4);
+            ctx.fillRect(68, 188, 14, 3);
           }
 
           // Traditional Village Houses in background
@@ -2623,7 +2955,7 @@
           drawDulohupaHouse(ctx, 278, 70, 46, 30);
 
           // Swaying Palm Trees
-          var sway = Math.sin(t * 1.6) * 2;
+          var sway = Math.sin(t * (isRainy ? 3.2 : 1.6)) * (isRainy ? 3.5 : 2);
           drawPixelPalm(ctx, 18, 104, sway);
           drawPixelPalm(ctx, 456, 106, -sway);
         }
@@ -2769,6 +3101,119 @@
           }
         }
 
+        function drawRainWeather(ctx, width, height, dt) {
+          // Subtle cool rain atmosphere tint
+          ctx.fillStyle = "rgba(24, 52, 72, 0.14)";
+          ctx.fillRect(0, 0, width, height);
+
+          // Gentle diagonal pixel rain particles
+          for (var i = 0; i < raindrops.length; i++) {
+            var d = raindrops[i];
+            d.y += d.speed * dt;
+            d.x -= (d.speed * 0.18) * dt;
+            if (d.y > height - 8) {
+              if (splashes.length < 28 && i % 3 === 0) {
+                splashes.push({ x: d.x, y: Math.max(106, d.y), life: 0.24 });
+              }
+              d.y = -4;
+              d.x = ((d.x + 60) % width);
+            }
+            if (d.x < 0) d.x += width;
+
+            ctx.fillStyle = i % 2 === 0 ? "rgba(182, 229, 245, 0.72)" : "rgba(138, 212, 223, 0.52)";
+            var rx = Math.floor(d.x);
+            var ry = Math.floor(d.y);
+            ctx.fillRect(rx, ry, 1, Math.min(3, d.len));
+            ctx.fillRect(rx - 1, ry + 3, 1, Math.max(1, d.len - 3));
+          }
+
+          // Ground splash ripples
+          for (var s = splashes.length - 1; s >= 0; s--) {
+            var sp = splashes[s];
+            sp.life -= dt;
+            if (sp.life <= 0) {
+              splashes.splice(s, 1);
+              continue;
+            }
+            ctx.fillStyle = "rgba(218, 245, 255, 0.65)";
+            var sx = Math.floor(sp.x);
+            var sy = Math.floor(sp.y);
+            ctx.fillRect(sx - 2, sy, 1, 1);
+            ctx.fillRect(sx + 2, sy, 1, 1);
+          }
+        }
+
+        function updateSeagulls(dt, width, isRainy) {
+          seagullSpawnTimer -= dt;
+          if (seagullSpawnTimer <= 0) {
+            var count = isRainy ? 1 : (1 + Math.floor(Math.random() * 3));
+            var fromLeft = Math.random() > 0.45;
+            var baseY = 10 + Math.floor(Math.random() * 28);
+            var baseSpeed = 20 + Math.random() * 14;
+            for (var c = 0; c < count; c++) {
+              seagulls.push({
+                x: fromLeft ? (-12 - c * 16) : (width + 12 + c * 16),
+                y: baseY + (c % 2 === 0 ? -c * 3 : c * 4),
+                vx: fromLeft ? baseSpeed : -baseSpeed,
+                flapPhase: Math.random() * Math.PI * 2,
+                flapSpeed: 6 + Math.random() * 2.5,
+                bobPhase: Math.random() * Math.PI * 2
+              });
+            }
+            seagullSpawnTimer = isRainy ? (5.5 + Math.random() * 4.0) : (2.8 + Math.random() * 3.8);
+          }
+
+          for (var i = seagulls.length - 1; i >= 0; i--) {
+            var g = seagulls[i];
+            g.x += g.vx * dt;
+            g.flapPhase += g.flapSpeed * dt;
+            g.bobPhase += 2.2 * dt;
+            if ((g.vx > 0 && g.x > width + 24) || (g.vx < 0 && g.x < -24)) {
+              seagulls.splice(i, 1);
+            }
+          }
+        }
+
+        function drawSeagulls(ctx, isRainy) {
+          var bodyColor = isRainy ? "#dce6ee" : "#fff9eb";
+          var outlineColor = isRainy ? "#2b3e4c" : "#4a3324";
+          for (var i = 0; i < seagulls.length; i++) {
+            var g = seagulls[i];
+            var gx = Math.floor(g.x);
+            var gy = Math.floor(g.y + Math.sin(g.bobPhase) * 1.5);
+            var flap = Math.sin(g.flapPhase);
+
+            // Pixel body (3x1) + subtle dark wingtip/eye pixel
+            ctx.fillStyle = outlineColor;
+            ctx.fillRect(gx, gy + 1, 3, 1);
+            ctx.fillStyle = bodyColor;
+            ctx.fillRect(gx, gy, 3, 1);
+
+            if (flap > 0.25) {
+              // Wings raised ("V" shape)
+              ctx.fillStyle = outlineColor;
+              ctx.fillRect(gx - 3, gy - 2, 2, 1);
+              ctx.fillRect(gx + 4, gy - 2, 2, 1);
+              ctx.fillStyle = bodyColor;
+              ctx.fillRect(gx - 2, gy - 1, 2, 1);
+              ctx.fillRect(gx + 3, gy - 1, 2, 1);
+            } else if (flap < -0.25) {
+              // Wings dipped downward
+              ctx.fillStyle = outlineColor;
+              ctx.fillRect(gx - 3, gy + 2, 2, 1);
+              ctx.fillRect(gx + 4, gy + 2, 2, 1);
+              ctx.fillStyle = bodyColor;
+              ctx.fillRect(gx - 2, gy + 1, 2, 1);
+              ctx.fillRect(gx + 3, gy + 1, 2, 1);
+            } else {
+              // Gliding flat wings
+              ctx.fillStyle = bodyColor;
+              ctx.fillRect(gx - 3, gy, 3, 1);
+              ctx.fillRect(gx + 3, gy, 3, 1);
+            }
+          }
+        }
+
         function drawParticles(ctx, dt) {
           for (var i = particles.length - 1; i >= 0; i--) {
             var p = particles[i];
@@ -2791,23 +3236,34 @@
           lastTs = ts;
           animTime += dt;
 
+          var state = GameManager.getState();
+          var isRainy = state.weather === "rainy";
+          updateSeagulls(dt, 480, isRainy);
+
           // Render title canvas if visible
           var titleScreen = document.getElementById("title-screen");
           if (titleCanvas && titleScreen && titleScreen.style.display !== "none") {
             tCtx.imageSmoothingEnabled = false;
-            drawBackdropScene(tCtx, titleCanvas.width, titleCanvas.height, animTime);
+            drawBackdropScene(tCtx, titleCanvas.width, titleCanvas.height, animTime, isRainy);
+            drawSeagulls(tCtx, isRainy);
+            if (isRainy) {
+              drawRainWeather(tCtx, titleCanvas.width, titleCanvas.height, dt);
+            }
           }
 
           // Render active market canvas
           if (marketCanvas && mCtx) {
             mCtx.imageSmoothingEnabled = false;
-            drawBackdropScene(mCtx, marketCanvas.width, marketCanvas.height, animTime);
-            var state = GameManager.getState();
+            drawBackdropScene(mCtx, marketCanvas.width, marketCanvas.height, animTime, isRainy);
+            drawSeagulls(mCtx, isRainy);
             for (var i = 0; i < state.merchants.length; i++) {
               var m = state.merchants[i];
               drawMerchantBooth(mCtx, m, m.id === state.selectedMerchantId, animTime);
             }
             drawParticles(mCtx, dt);
+            if (isRainy) {
+              drawRainWeather(mCtx, marketCanvas.width, marketCanvas.height, dt);
+            }
           }
 
           window.requestAnimationFrame(tick);
@@ -2838,7 +3294,8 @@
 
             window.requestAnimationFrame(tick);
           },
-          spawnTradeBurst: spawnTradeBurst
+          spawnTradeBurst: spawnTradeBurst,
+          drawSeagulls: drawSeagulls
         };
       })();
 
@@ -2857,26 +3314,52 @@
         }
 
         function renderTopHud(state) {
-          document.getElementById("hud-weather").textContent = state.weather;
+          var weatherCfg = WEATHER_TYPES[state.weather] || WEATHER_TYPES.sunny;
+          var weatherEl = document.getElementById("hud-weather");
+          weatherEl.textContent = weatherCfg.label;
+          weatherEl.classList.toggle("rainy", state.weather === "rainy");
+          drawSpriteOnCanvas(
+            document.getElementById("hud-weather-icon"),
+            state.weather === "rainy" ? "rain" : "sun",
+            1.5
+          );
+
           var turnsEl = document.getElementById("hud-turns");
           turnsEl.textContent = state.turnsRemaining + " / " + state.maxTurns;
           turnsEl.classList.toggle("warn", state.turnsRemaining <= 1 && state.outcome === "playing");
 
           var swordCount = InventoryManager.getCount("sword");
-          document.getElementById("hud-target").textContent = "Iron Sword (" + swordCount + "/1)";
+          document.getElementById("hud-target").textContent = "Pedang Besi (" + swordCount + "/1)";
 
-          document.getElementById("side-turns").textContent = state.turnsRemaining + " Remaining";
-          document.getElementById("side-target-progress").textContent = "Progress: " + swordCount + " / 1";
+          document.getElementById("side-turns").textContent = state.turnsRemaining + " Tersisa";
+          document.getElementById("side-weather").textContent = weatherCfg.detail;
+          document.getElementById("side-efficiency").textContent = weatherCfg.efficiencyText;
+          document.getElementById("trade-efficiency-badge").textContent =
+            "Efisiensi: " + Math.round(weatherCfg.efficiency * 100) + "% · 1 Giliran";
+          document.getElementById("side-target-progress").textContent = "Progres: " + swordCount + " / 1";
           document.getElementById("target-card").classList.toggle("complete", swordCount >= 1);
 
           var soundOn = AudioFX.isEnabled();
-          document.getElementById("hud-sound-label").textContent = soundOn ? "Sound On" : "Muted";
+          document.getElementById("hud-sound-label").textContent = soundOn ? "Suara Aktif" : "Bisu";
           drawSpriteOnCanvas(document.getElementById("hud-sound-icon"), soundOn ? "soundOn" : "soundOff", 1.5);
 
           var toggleBtn = document.getElementById("btn-toggle-sound");
           if (toggleBtn) {
-            toggleBtn.textContent = soundOn ? "On" : "Off";
+            toggleBtn.textContent = soundOn ? "Aktif" : "Mati";
             toggleBtn.className = "pixel-btn " + (soundOn ? "pixel-btn-green" : "");
+          }
+
+          var ambOn = AudioFX.isAmbienceEnabled();
+          var ambBtn = document.getElementById("btn-toggle-ambience");
+          if (ambBtn) {
+            ambBtn.textContent = ambOn ? "Aktif" : "Mati";
+            ambBtn.className = "pixel-btn " + (ambOn ? "pixel-btn-green" : "");
+          }
+
+          var weatherSetBtn = document.getElementById("btn-toggle-weather-settings");
+          if (weatherSetBtn) {
+            weatherSetBtn.textContent = weatherCfg.label;
+            weatherSetBtn.className = "pixel-btn " + (state.weather === "rainy" ? "pixel-btn-wood" : "pixel-btn-gold");
           }
         }
 
@@ -2902,7 +3385,7 @@
 
               var stockEl = document.createElement("span");
               stockEl.className = "booth-stock tabular";
-              stockEl.textContent = m.stock > 0 ? "Stock: " + m.stock : "Sold Out";
+              stockEl.textContent = m.stock > 0 ? "Stok: " + m.stock : "Stok Habis";
 
               top.appendChild(nameEl);
               top.appendChild(stockEl);
@@ -2985,7 +3468,7 @@
             slot.appendChild(meta);
             grid.appendChild(slot);
           }
-          document.getElementById("inv-total-count").textContent = InventoryManager.totalCount() + " items";
+          document.getElementById("inv-total-count").textContent = InventoryManager.totalCount() + " barang";
           lastInventorySnapshot = inv;
         }
 
@@ -3006,14 +3489,14 @@
             emptyMsg.style.padding = "20px 8px";
             emptyMsg.style.textAlign = "center";
             emptyMsg.style.color = "var(--ink-soft)";
-            emptyMsg.textContent = "Select one of the three merchant booths above to inspect their barter offer.";
+            emptyMsg.textContent = "Pilih salah satu dari tiga kios pedagang di atas untuk memeriksa penawaran barter.";
             body.appendChild(emptyMsg);
             return;
           }
 
           var check = TradeManager.canTrade(merchant, state.turnsRemaining);
 
-          // Merchant Header
+          // Header Pedagang
           var head = document.createElement("div");
           head.className = "trade-merchant-header";
 
@@ -3039,22 +3522,22 @@
 
           var stockBadge = document.createElement("div");
           stockBadge.className = "trade-stock-text tabular" + (merchant.stock <= 0 ? " out" : "");
-          stockBadge.textContent = merchant.stock > 0 ? "Available Stock: " + merchant.stock : "Sold Out";
+          stockBadge.textContent = merchant.stock > 0 ? "Stok Tersedia: " + merchant.stock : "Stok Habis";
 
           head.appendChild(idWrap);
           head.appendChild(stockBadge);
           body.appendChild(head);
 
-          // Exchange Row
+          // Baris Pertukaran
           var exRow = document.createElement("div");
           exRow.className = "trade-exchange-row";
 
-          // Player Gives Box
+          // Kotak Barang yang Diberikan Pemain
           var giveBox = document.createElement("div");
           giveBox.className = "trade-box";
           var giveLbl = document.createElement("div");
           giveLbl.className = "trade-box-label";
-          giveLbl.textContent = "You Give";
+          giveLbl.textContent = "Anda Berikan";
           giveBox.appendChild(giveLbl);
 
           var reqList = document.createElement("div");
@@ -3076,7 +3559,7 @@
 
             var stat = document.createElement("span");
             stat.className = "trade-req-status tabular " + (enough ? "ok" : "missing");
-            stat.textContent = enough ? "Have " + have : "Need " + req.qty + " (Have " + have + ")";
+            stat.textContent = enough ? "Punya " + have : "Perlu " + req.qty + " (Punya " + have + ")";
 
             line.appendChild(left);
             line.appendChild(stat);
@@ -3084,17 +3567,17 @@
           }
           giveBox.appendChild(reqList);
 
-          // Center Arrow
+          // Panah Tengah
           var centerArrow = document.createElement("div");
           centerArrow.className = "trade-center-arrow";
           centerArrow.textContent = "=>";
 
-          // Player Receives Box
+          // Kotak Barang yang Diterima Pemain
           var recBox = document.createElement("div");
           recBox.className = "trade-box";
           var recLbl = document.createElement("div");
           recLbl.className = "trade-box-label";
-          recLbl.textContent = "You Receive";
+          recLbl.textContent = "Anda Terima";
           recBox.appendChild(recLbl);
 
           var recList = document.createElement("div");
@@ -3119,7 +3602,7 @@
           exRow.appendChild(recBox);
           body.appendChild(exRow);
 
-          // Footer: Feedback + Trade Button
+          // Bagian Bawah: Umpan Balik + Tombol Tukar
           var footer = document.createElement("div");
           footer.className = "trade-footer";
 
@@ -3130,7 +3613,7 @@
           var btn = document.createElement("button");
           btn.type = "button";
           btn.className = "pixel-btn pixel-btn-gold trade-confirm-btn";
-          btn.textContent = "TRADE";
+          btn.textContent = "TUKAR";
           btn.disabled = !check.valid || state.outcome !== "playing";
           btn.addEventListener("click", function () {
             GameManager.confirmTrade();
@@ -3145,17 +3628,19 @@
           var inv = InventoryManager.getAll();
           var text = "";
           if (inv.sword >= 1) {
-            text = "Incredible! The Iron Sword gleams in the sunlight. Our coastal barter journey is complete!";
+            text = "Luar biasa! Pedang Besi berkilau gagah. Perjalanan barter kita di pesisir Gorontalo selesai dengan gemilang!";
           } else if (state.turnsRemaining === 0) {
-            text = "The market bells are ringing and our turns have run out. Let's restart and try a cleaner route.";
+            text = "Lonceng pasar sudah berbunyi dan giliran kita habis. Mari ulangi tahap ini dan susun rute barter yang lebih tepat.";
           } else if (inv.fish >= 1 && inv.firewood >= 1) {
-            text = "We have both Fresh Fish and Firewood! Head straight to the Blacksmith to forge the Iron Sword.";
+            text = "Kita sudah punya Ikan Segar dan Kayu Bakar! Segera temui Pandai Besi untuk menempa Pedang Besi.";
           } else if (inv.fish >= 1 && inv.firewood === 0) {
-            text = "Great catch! Now trade our remaining 1 Salt with the Woodcutter for Firewood.";
+            text = "Tangkapan bagus! Sekarang tukarkan 1 Garam tersisa dengan Penebang Kayu untuk memperoleh Kayu Bakar.";
           } else if (inv.firewood >= 1 && inv.fish === 0) {
-            text = "Solid timber secured! Now trade our remaining 1 Salt with the Fisherman for Fresh Fish.";
+            text = "Kayu bakar sudah aman! Sekarang tukarkan 1 Garam tersisa dengan Nelayan untuk memperoleh Ikan Segar.";
+          } else if (state.weather === "rainy") {
+            text = "Hujan turun di Teluk Tomini—efisiensi skor barter berkurang menjadi 75%, tetapi 2 Garam kita tetap cukup untuk menukar Ikan dan Kayu Bakar!";
           } else {
-            text = "We hold 2 Salt and have 3 turns. Trade 1 Salt with the Fisherman and 1 Salt with the Woodcutter first!";
+            text = "Kita membawa 2 Garam dan memiliki 3 giliran. Tukarkan masing-masing 1 Garam dengan Nelayan dan Penebang Kayu terlebih dahulu!";
           }
           document.getElementById("companion-dialogue").textContent = text;
         }
@@ -3216,14 +3701,16 @@
           }
         }
 
-        function showVictoryModal(score, stars, turnsUsed, maxTurns, bestScore) {
+        function showVictoryModal(score, stars, turnsUsed, maxTurns, bestScore, weatherLabel) {
           document.getElementById("victory-score").textContent = String(score);
           document.getElementById("victory-turns-used").textContent = turnsUsed + " / " + maxTurns;
           document.getElementById("victory-best-score").textContent = String(bestScore);
+          document.getElementById("victory-summary-desc").textContent =
+            "Berkat strategi barter yang cermat di Pasar Desa Pesisir (Cuaca: " + weatherLabel + "), kamu berhasil mengumpulkan hasil tangkapan dan kayu bakar untuk menempa Pedang Besi.";
 
           var starsWrap = document.getElementById("victory-stars");
           starsWrap.innerHTML = "";
-          starsWrap.setAttribute("aria-label", stars + " of 3 Stars Earned");
+          starsWrap.setAttribute("aria-label", stars + " dari 3 Bintang Diraih");
           for (var s = 1; s <= 3; s++) {
             starsWrap.appendChild(createMiniSpriteCanvas(s <= stars ? "star" : "starEmpty", 2.25, 36));
           }
@@ -3273,7 +3760,7 @@
         var saveData = SaveManager.load();
         var state = {
           levelId: 1,
-          weather: "Sunny",
+          weather: "sunny",
           maxTurns: 3,
           turnsRemaining: 3,
           merchants: [],
@@ -3288,6 +3775,7 @@
           if (state.outcome === "playing") {
             saveData.activeRun = {
               turnsRemaining: state.turnsRemaining,
+              weather: state.weather,
               inventory: InventoryManager.getAll(),
               stocks: state.merchants.map(function (m) {
                 return { id: m.id, stock: m.stock };
@@ -3313,11 +3801,12 @@
             return m;
           });
           state.selectedMerchantId = "fisherman";
-          state.feedbackMessage = "Select a merchant and confirm your first barter.";
+          state.feedbackMessage = "Pilih pedagang dan konfirmasi barter pertamamu.";
           state.feedbackType = "";
           state.outcome = "playing";
           UIManager.closeAllModals();
           UIManager.showScreen("playing");
+          AudioFX.updateContext("playing", state.weather, true);
           UIManager.renderAll(state);
           persistActiveRun();
 
@@ -3337,7 +3826,7 @@
           TradeManager.resetLock();
           InventoryManager.init(saveData.activeRun.inventory);
           state.levelId = cfg.id;
-          state.weather = cfg.weather;
+          state.weather = WEATHER_TYPES[saveData.activeRun.weather] ? saveData.activeRun.weather : cfg.weather;
           state.maxTurns = cfg.maxTurns;
           state.turnsRemaining = saveData.activeRun.turnsRemaining;
           state.merchants = cfg.merchants.map(function (m) {
@@ -3350,11 +3839,12 @@
             return m;
           });
           state.selectedMerchantId = saveData.activeRun.selectedMerchantId || "fisherman";
-          state.feedbackMessage = "Resumed your coastal market journey.";
+          state.feedbackMessage = "Melanjutkan perjalanan pasarmu di Teluk Tomini.";
           state.feedbackType = "";
           state.outcome = "playing";
           UIManager.closeAllModals();
           UIManager.showScreen("playing");
+          AudioFX.updateContext("playing", state.weather, true);
           UIManager.renderAll(state);
         }
 
@@ -3371,8 +3861,10 @@
           if (InventoryManager.getCount("sword") >= 1) {
             state.outcome = "victory";
             var turnsUsed = state.maxTurns - state.turnsRemaining;
-            var stars = turnsUsed <= 3 ? 3 : 2;
-            var score = 1000 + state.turnsRemaining * 150 + InventoryManager.totalCount() * 100;
+            var weatherCfg = WEATHER_TYPES[state.weather] || WEATHER_TYPES.sunny;
+            var stars = (turnsUsed <= 3 && state.weather === "sunny") ? 3 : 2;
+            var rawScore = 1000 + state.turnsRemaining * 150 + InventoryManager.totalCount() * 100;
+            var score = Math.round(rawScore * weatherCfg.efficiency);
             if (score > saveData.bestScore) saveData.bestScore = score;
             if (stars > saveData.bestStars) saveData.bestStars = stars;
             if (saveData.completedLevels.indexOf(1) === -1) {
@@ -3383,7 +3875,7 @@
             AudioFX.playVictory();
             UIManager.renderAll(state);
             window.setTimeout(function () {
-              UIManager.showVictoryModal(score, stars, turnsUsed, state.maxTurns, saveData.bestScore);
+              UIManager.showVictoryModal(score, stars, turnsUsed, state.maxTurns, saveData.bestScore, weatherCfg.label);
             }, 320);
             return;
           }
@@ -3395,7 +3887,7 @@
             AudioFX.playDefeat();
             UIManager.renderAll(state);
             window.setTimeout(function () {
-              UIManager.showFailureModal("All 3 turns were spent before obtaining the Iron Sword.");
+              UIManager.showFailureModal("Seluruh 3 giliran telah terpakai sebelum Pedang Besi berhasil ditempa.");
             }, 260);
             return;
           }
@@ -3407,13 +3899,27 @@
             AudioFX.playDefeat();
             UIManager.renderAll(state);
             window.setTimeout(function () {
-              UIManager.showFailureModal("No valid barter paths remain to forge the Iron Sword.");
+              UIManager.showFailureModal("Tidak ada jalur barter tersisa untuk mendapatkan Pedang Besi.");
             }, 260);
           }
         }
 
+        function toggleWeather() {
+          if (state.outcome !== "playing") return;
+          state.weather = state.weather === "sunny" ? "rainy" : "sunny";
+          var cfg = WEATHER_TYPES[state.weather];
+          state.feedbackMessage = state.weather === "rainy"
+            ? "Cuaca berubah menjadi Hujan! Efisiensi skor barter menjadi 75%."
+            : "Cuaca kembali Cerah! Efisiensi barter kembali optimal (100%).";
+          state.feedbackType = "";
+          AudioFX.playSelect();
+          AudioFX.updateContext("playing", state.weather, true);
+          persistActiveRun();
+          UIManager.renderAll(state);
+        }
+
         function bindEvents() {
-          // Title screen buttons
+          // Tombol layar judul
           document.getElementById("btn-start-game").addEventListener("click", function () {
             AudioFX.playSelect();
             startFreshLevel();
@@ -3429,7 +3935,10 @@
             UIManager.openModal("modal-tutorial");
           });
 
-          // HUD & Sidebar buttons
+          // Tombol HUD & Bilah Kanan
+          document.getElementById("btn-weather-toggle").addEventListener("click", toggleWeather);
+          document.getElementById("btn-toggle-weather-settings").addEventListener("click", toggleWeather);
+
           document.getElementById("btn-encyclopedia").addEventListener("click", function () {
             AudioFX.playSelect();
             UIManager.openModal("modal-encyclopedia");
@@ -3465,8 +3974,18 @@
             UIManager.renderAll(state);
           }
 
+          function toggleAmbience() {
+            var next = !AudioFX.isAmbienceEnabled();
+            AudioFX.setAmbienceEnabled(next);
+            saveData.ambienceEnabled = next;
+            SaveManager.save(saveData);
+            if (next && AudioFX.isEnabled()) AudioFX.playSelect();
+            UIManager.renderAll(state);
+          }
+
           document.getElementById("btn-sound-quick").addEventListener("click", toggleSound);
           document.getElementById("btn-toggle-sound").addEventListener("click", toggleSound);
+          document.getElementById("btn-toggle-ambience").addEventListener("click", toggleAmbience);
 
           document.getElementById("btn-open-tutorial-from-settings").addEventListener("click", function () {
             UIManager.closeModal("modal-settings");
@@ -3482,6 +4001,7 @@
             SaveManager.clear();
             saveData = SaveManager.load();
             AudioFX.setEnabled(saveData.soundEnabled);
+            AudioFX.setAmbienceEnabled(saveData.ambienceEnabled);
             document.getElementById("btn-continue-game").style.display = "none";
             UIManager.closeModal("modal-settings");
             startFreshLevel();
@@ -3491,6 +4011,7 @@
             UIManager.closeAllModals();
             document.getElementById("btn-continue-game").style.display = saveData.activeRun ? "inline-flex" : "none";
             UIManager.showScreen("title");
+            AudioFX.updateContext("title", state.weather, false);
           });
 
           document.getElementById("btn-victory-play-again").addEventListener("click", function () {
@@ -3503,6 +4024,7 @@
             UIManager.closeAllModals();
             document.getElementById("btn-continue-game").style.display = "none";
             UIManager.showScreen("title");
+            AudioFX.updateContext("title", state.weather, false);
           });
 
           document.getElementById("btn-failure-retry").addEventListener("click", function () {
@@ -3510,7 +4032,7 @@
             startFreshLevel();
           });
 
-          // Close modal buttons & backdrop clicks
+          // Tutup modal & klik latar belakang
           var closeButtons = document.querySelectorAll("[data-close-modal]");
           for (var i = 0; i < closeButtons.length; i++) {
             closeButtons[i].addEventListener("click", function () {
@@ -3527,7 +4049,7 @@
             });
           }
 
-          // Keyboard shortcuts
+          // Pintasan keyboard
           window.addEventListener("keydown", function (ev) {
             var titleVisible = document.getElementById("title-screen").style.display !== "none";
             if (titleVisible && (ev.key === "Enter" || ev.key === " ")) {
@@ -3552,11 +4074,12 @@
         return {
           init: function () {
             AudioFX.setEnabled(saveData.soundEnabled);
+            AudioFX.setAmbienceEnabled(saveData.ambienceEnabled !== false);
             renderAllStaticSprites();
             UIManager.renderEncyclopedia();
             UIManager.renderRumor(RUMORS[0]);
 
-            // Populate initial state for background rendering
+            // Isi data awal untuk pratinjau latar
             var cfg = LevelManager.getLevelConfig();
             InventoryManager.init(cfg.startingInventory);
             state.merchants = cfg.merchants.map(function (m) {
@@ -3571,6 +4094,7 @@
             MarketSceneRenderer.init();
             bindEvents();
             UIManager.showScreen("title");
+            AudioFX.updateContext("title", state.weather, false);
           },
           getState: function () {
             return state;
@@ -3598,7 +4122,8 @@
                 var giveText = tradedMerchant.gives.map(function (g) {
                   return g.qty + " " + ITEMS[g.item].name;
                 }).join(" + ");
-                state.feedbackMessage = "Traded " + reqText + " for " + giveText + "!";
+                var effNote = state.weather === "rainy" ? " (Cuaca Hujan: efisiensi 75%)" : "";
+                state.feedbackMessage = "Berhasil menukar " + reqText + " dengan " + giveText + "!" + effNote;
                 state.feedbackType = "success";
                 AudioFX.playTrade();
                 MarketSceneRenderer.spawnTradeBurst(tradedMerchant);
